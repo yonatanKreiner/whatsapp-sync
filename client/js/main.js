@@ -26,7 +26,7 @@ $(document).ready(function() {
 
 
 	let apiInfo = {
-		url: "ws://localhost:2019",
+		url: "ws://localhost:2018",
 		timeout: 10000,
 		errors: {
 			basic: {

@@ -32,10 +32,12 @@ class WhatsAppWeb(WebSocket):
 	def sendJSON(self, obj, tag=None):
 		if "from" not in obj:
 			obj["from"] = "backend";
-		eprint("sending " + json.dumps(obj));
 		if tag is None:
 			tag = str(getTimestampMs());
 		self.sendMessage(tag + "," + json.dumps(obj));
+	
+	def nop(self, obj, tag=None):
+		pass;
 
 	def sendError(self, reason, tag=None):
 		eprint("sending error: " + reason);
@@ -43,11 +45,9 @@ class WhatsAppWeb(WebSocket):
 
 	def handleMessage(self):
 		try:
-			eprint(self.data);
 			tag = self.data.split(",", 1)[0];
 			obj = json.loads(self.data[len(tag)+1:]);
 
-			eprint(obj);
 			if "from" not in obj or obj["from"] != "api2backend" or "type" not in obj or not (("command" in obj and obj["command"] == "backend-connectWhatsApp") or "whatsapp_instance_id" in obj):
 				self.sendError("Invalid request");
 				return;
@@ -65,7 +65,7 @@ class WhatsAppWeb(WebSocket):
 						"args": { "resource_instance_id": clientInstanceId }
 					};
 					onMessageCallback = {
-						"func": lambda obj, cbSelf, moreArgs=None: self.sendJSON(mergeDicts(mergeDicts({ "type": "whatsapp_message_received", "message": obj, "timestamp": getTimestampMs() }, getAttr(cbSelf, "args")), moreArgs), getAttr(cbSelf, "tag")),
+						"func": lambda obj, cbSelf, moreArgs=None: self.nop(obj),
 						"args": { "resource_instance_id": clientInstanceId }
 					};
 					onCloseCallback = {

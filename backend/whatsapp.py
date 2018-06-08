@@ -29,8 +29,6 @@ from whatsapp_binary_reader import whatsappReadBinary;
 reload(sys);
 sys.setdefaultencoding("utf-8");
 
-
-
 def HmacSha256(key, sign):
 	return hmac.new(key, sign, hashlib.sha256).digest();
 
@@ -68,8 +66,6 @@ def AESDecrypt(key, ciphertext):						# from https://stackoverflow.com/a/2086826
 	plaintext = cipher.decrypt(ciphertext[AES.block_size:]);
 	return AESUnpad(plaintext);
 
-
-
 class WhatsAppWebClient:
 	websocketIsOpened = False;
 	onOpenCallback = None;
@@ -104,8 +100,6 @@ class WhatsAppWebClient:
 		websocket.enableTrace(True);
 		self.connect();
 
-
-
 	def onOpen(self, ws):
 		try:
 			self.websocketIsOpened = True;
@@ -133,13 +127,10 @@ class WhatsAppWebClient:
 			if messageTag in self.messageQueue:											# when the server responds to a client's message
 				pend = self.messageQueue[messageTag];
 				if pend["desc"] == "_login":
-					eprint("Message after login: ", message);
 					self.loginInfo["serverRef"] = json.loads(messageContent)["ref"];
-					eprint("set server id: " + self.loginInfo["serverRef"]);
 					self.loginInfo["privateKey"] = curve25519.Private();
 					self.loginInfo["publicKey"] = self.loginInfo["privateKey"].get_public();
 					qrCodeContents = self.loginInfo["serverRef"] + "," + base64.b64encode(self.loginInfo["publicKey"].serialize()) + "," + self.loginInfo["clientId"];
-					eprint("qr code contents: " + qrCodeContents);
 
 					svgBuffer = io.BytesIO();											# from https://github.com/mnooner256/pyqrcode/issues/39#issuecomment-207621532
 					pyqrcode.create(qrCodeContents, error='L').svg(svgBuffer, scale=6, background="rgba(0,0,0,0.0)", module_color="#122E31", quiet_zone=0);
@@ -166,7 +157,6 @@ class WhatsAppWebClient:
 				else:
 					self.onMessageCallback["func"](jsonObj, self.onMessageCallback, { "message_type": "json" });
 					if isinstance(jsonObj, list) and len(jsonObj) > 0:					# check if the result is an array
-						eprint(json.dumps(jsonObj));
 						if jsonObj[0] == "Conn":
 							self.connInfo["clientToken"] = jsonObj[1]["clientToken"];
 							self.connInfo["serverToken"] = jsonObj[1]["serverToken"];
@@ -184,16 +174,7 @@ class WhatsAppWebClient:
 							keysDecrypted = AESDecrypt(sse[:32], keysEncrypted);
 							self.loginInfo["key"]["encKey"] = keysDecrypted[:32];
 							self.loginInfo["key"]["macKey"] = keysDecrypted[32:64];
-							
-							# eprint("private key            : ", base64.b64encode(self.loginInfo["privateKey"].serialize()));
-							# eprint("secret                 : ", base64.b64encode(self.connInfo["secret"]));
-							# eprint("shared secret          : ", base64.b64encode(self.connInfo["sharedSecret"]));
-							# eprint("shared secret expanded : ", base64.b64encode(self.connInfo["sharedSecretExpanded"]));
-							# eprint("hmac validation        : ", base64.b64encode(hmacValidation));
-							# eprint("keys encrypted         : ", base64.b64encode(keysEncrypted));
-							# eprint("keys decrypted         : ", base64.b64encode(keysDecrypted));
 
-							eprint("set connection info: client, server and browser token; secret, shared secret, enc key, mac key");
 							eprint("logged in as " + jsonObj[1]["pushname"]  + " (" + jsonObj[1]["wid"] + ")");
 						elif jsonObj[0] == "Stream":
 							pass;
@@ -201,8 +182,6 @@ class WhatsAppWebClient:
 							pass;
 		except:
 			eprint(traceback.format_exc());
-
-
 
 	def connect(self):
 		self.activeWs = websocket.WebSocketApp("wss://w1.web.whatsapp.com/ws",

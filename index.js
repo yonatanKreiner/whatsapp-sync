@@ -4,15 +4,18 @@ let path = require("path");
 let {StringDecoder} = require("string_decoder");
 let express = require("express");
 let WebSocket = require("ws");
-let app = express();
 
 let {WebSocketClient} = require("./client/js/WebSocketClient.js");
 let {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
+let server = express()
+	.use(express.static("client"))
+	.listen(2018, function() {
+		console.log("whatsapp-web-reveng HTTP server listening on port 2018");
+	});
 
 
-let wss = new WebSocket.Server({ port: 2019 });
-console.log("whatsapp-web-reveng API server listening on port 2019");
+let wss = new WebSocket.Server({ server });
 
 let backendInfo = {
 	url: "ws://localhost:2020",
@@ -119,96 +122,8 @@ wss.on("connection", function(clientWebsocketRaw, req) {
 			}
 		}).run(backendInfo.timeout).then(backendResponse => {
 			clientCallRequest.respond({ type: "generated_qr_code", image: backendResponse.data.image })
-
-			backendWebsocket.waitForMessage({
-				condition: obj => obj.type == "whatsapp_message_received"  &&  obj.message  &&  obj.message_type  &&  obj.timestamp  &&  obj.resource_instance_id == backendWebsocket.activeWhatsAppInstanceId,
-				keepWhenHit: true
-			}).then(whatsAppMessage => {
-				let d = whatsAppMessage.data;
-				clientWebsocket.send({ type: "whatsapp_message_received", message: d.message, message_type: d.message_type, timestamp: d.timestamp });
-			}).run();
 		}).catch(reason => {
 			clientCallRequest.respond({ type: "error", reason: reason });
 		})
 	}).run();
-
-
-	//TODO:
-	// - designated backend call function to make everything shorter
-	// - allow client to call "backend-getLoginInfo" and "backend-getConnectionInfo"
-	// - add buttons for that to client
-	// - look for handlers in "decoder.py" and add them to output information
-	// - when decoding fails, write packet to file for further investigation later
-
-
-
-	/*let send = (obj, tag) => {
-		let msgTag = tag==undefined ? (+new Date()) : tag;
-		if(obj.from == undefined)
-			obj.from = "api";
-		clientWebsocket.send(`${msgTag},${JSON.stringify(obj)}`);
-	};
-
-	send({ type: "connected" });*/
-	/*let backendCall = command => {
-		if(!waBackendValid) {
-			send({ type: "error", msg: "No backend connected." });
-			return;
-		}
-		waBackend.onmessage = msg => {
-			let data = JSON.parse(msg.data);
-			if(data.status == 200)
-				send(data);
-		};
-		waBackend.send(command);
-	};*/
-
-	/*clientWebsocket.on("message", function(msg) {
-		let tag = msg.split(",")[0];
-		let obj = JSON.parse(msg.substr(tag.length + 1));
-
-		switch(obj.command) {
-			case "api-connectBackend": {*/
-				
-
-				//backendWebsocket = new WebSocketClient("ws://localhost:2020", true);
-				//backendWebsocket.onClose
-
-				/*waBackend = new WebSocket("ws://localhost:2020", { perMessageDeflate: false });
-				waBackend.onclose = () => {
-					waBackendValid = false;
-					waBackend = undefined;
-					send({ type: "resource_gone", resource: "backend" });
-				};
-				waBackend.onopen = () => {
-					waBackendValid = true;
-					send({ type: "resource_connected", resource: "backend" }, tag);
-				};*/
-				//break;
-			//}
-
-			/*case "backend-connectWhatsApp":
-			case "backend-generateQRCode": {
-				backendCall(msg);
-				break;
-			}*/
-	//	}
-	//});
-
-	//clientWebsocket.on("close", function() {
-		/*if(waBackend != undefined) {
-			waBackend.onclose = () => {};
-			waBackend.close();
-			waBackend = undefined;
-		}*/
-	//});
-})
-
-
-
-
-app.use(express.static("client"));
-
-app.listen(2018, function() {
-	console.log("whatsapp-web-reveng HTTP server listening on port 2018");
 });
