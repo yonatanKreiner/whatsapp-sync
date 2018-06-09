@@ -136,6 +136,10 @@ class WhatsAppWebClient:
 					pyqrcode.create(qrCodeContents, error='L').svg(svgBuffer, scale=6, background="rgba(0,0,0,0.0)", module_color="#122E31", quiet_zone=0);
 					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
 						pend["callback"]["func"]({ "type": "generated_qr_code", "image": "data:image/svg+xml;base64," + base64.b64encode(svgBuffer.getvalue()), "content": qrCodeContents }, pend["callback"]);
+				elif pend["desc"] == "_photo":
+					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
+						jsonObj = json.loads(messageContent);
+						pend["callback"]["func"]({ "type": "profile_photo", "image": jsonObj["eurl"]}, pend["callback"])
 			else:
 				try:
 					jsonObj = json.loads(messageContent);								# try reading as json
@@ -200,6 +204,12 @@ class WhatsAppWebClient:
 		messageTag = str(getTimestamp());
 		self.messageQueue[messageTag] = { "desc": "_login", "callback": callback };
 		message = messageTag + ',["admin","init",[0,2,9547],["Chromium at ' + datetime.datetime.now().isoformat() + '","Chromium"],"' + self.loginInfo["clientId"] + '",true]';
+		self.activeWs.send(message);
+	
+	def getPhoto(self, phone, callback=None):
+		messageTag = str(getTimestamp());
+		self.messageQueue[messageTag] = { "desc": "_photo", "callback": callback };
+		message = messageTag + ',["query","ProfilePicThumb","' + phone + '@c.us"]';
 		self.activeWs.send(message);
 	
 	def getLoginInfo(self, callback):

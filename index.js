@@ -10,11 +10,17 @@ let {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
 let server = express();
 
+let backendWebsocket;
+
 server.use(express.static("client"));
 
 server.get('/connect', async (req, res) => {
 	res.send(await connect());
 });
+
+server.get('/photo', async (req, res) => {
+	res.send(await getPhoto('972526053444'));
+})
 
 server.listen(2018, function() {
 	console.log("whatsapp-photo-sync HTTP server listening on port 2018");
@@ -27,7 +33,7 @@ let backendInfo = {
 
 async function connect() {
 	try {
-		let backendWebsocket = new WebSocketClient();
+		backendWebsocket = new WebSocketClient();
 
 		if(backendWebsocket.isOpen){
 			return;
@@ -85,9 +91,29 @@ async function connect() {
 			}
 		}).run(backendInfo.timeout));
 
-		return { image: backendResponse.data.image };
+		return { type: 'generated_qr_code', image: backendResponse.data.image };
 	} catch (error) {
 		return { type: "error", reason: error };
+	}
+}
+
+async function getPhoto(phone) {
+	try {
+		if(!backendWebsocket.isOpen) {
+			throw { type: "error", reason: "No backend connected." };
+		}
+		let backendResponse = await (new BootstrapStep({
+			websocket: backendWebsocket,
+			request: {
+				type: "call",
+				callArgs: { command: "backend-getPhoto", whatsapp_instance_id: backendWebsocket.activeWhatsAppInstanceId, phone },
+				successCondition: obj => obj.from == "backend"  &&  obj.type == "profile_photo"  &&  obj.image
+			}
+		}).run(backendInfo.timeout));
+
+		return { type: "profile_photo", image: backendResponse.data.image}
+	} catch (error) {
+		return { type: "error", reason: error }
 	}
 }
 

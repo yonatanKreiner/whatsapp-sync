@@ -11,7 +11,7 @@ function activateQRCode(image) {
 }
 
 $(document).ready(function() {
-	$.getJSON('/test', data => {
+	$.getJSON('/connect', data => {
 		activateQRCode(data.image)
 	});
 
