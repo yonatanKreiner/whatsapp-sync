@@ -7,10 +7,15 @@ function sleep(ms) {
 
 function activateQRCode(image) {
 	let container = $("#bootstrap-container");
-	container.append($("<img>").attr("src", image));
+	container.prepend($("<img>").attr("src", image));
+	$("#button-contacts").attr("disabled", false);
 }
 
 $(document).ready(function() {
+	$("#button-contacts").click(function() {
+		window.location.href = '/contacts'; 
+	});
+
 	$.getJSON('/connect', data => {
 		activateQRCode(data.image)
 	});

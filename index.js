@@ -46,7 +46,7 @@ var url = oauth2Client.generateAuthUrl({
   ]
 });
 
-server.get('/', (req, res) => {
+server.get('/contacts', (req, res) => {
     res.redirect(url);
 });
 
