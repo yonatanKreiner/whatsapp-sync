@@ -4,6 +4,10 @@ let path = require("path");
 let {StringDecoder} = require("string_decoder");
 let express = require("express");
 let WebSocket = require("ws");
+const axios = require('axios');
+const querystring = require('querystring');
+var { google } = require('googleapis');
+var GoogleContacts = require('google-contacts-api');
 
 let {WebSocketClient} = require("./client/js/WebSocketClient.js");
 let {BootstrapStep}   = require("./client/js/BootstrapStep.js");
@@ -11,6 +15,65 @@ let {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 let server = express();
 
 let backendWebsocket;
+
+var CLIENT_ID = '993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com';
+var CLIENT_SECRET = 'OKBleQniLAPT0KKJHs3ld7ZM';
+var REDIRECT_URI = 'http://localhost:2018/authorized';
+
+let credentials ={
+	web: {
+		client_id: "993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com",
+		project_id: "whatsapp-photo-sync",
+		auth_uri: "https://accounts.google.com/o/oauth2/auth",
+		token_uri: "https://accounts.google.com/o/oauth2/token",
+		auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+		client_secret: "OKBleQniLAPT0KKJHs3ld7ZM",
+		redirect_uris: ["http://localhost:2018/authorized"]
+	}
+}
+
+var oauth2Client = new google.auth.OAuth2(
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URI
+);
+
+var url = oauth2Client.generateAuthUrl({
+  access_type: 'offline',
+  scope: [
+    'https://www.google.com/m8/feeds/contacts/default/full',
+    'https://www.google.com/m8/feeds/photos/media/default/'
+  ]
+});
+
+server.get('/', (req, res) => {
+    res.redirect(url);
+});
+
+server.get('/authorized', (req, res) => {
+    var formData =  {
+        code: req.query.code,
+        client_id: CLIENT_ID,
+        client_secret: CLIENT_SECRET,
+        grant_type: 'authorization_code',
+        redirect_uri: REDIRECT_URI
+    };
+
+    axios.post('https://www.googleapis.com/oauth2/v4/token', querystring.stringify(formData), {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    }).then(function(response) {
+        var contacts = new GoogleContacts({ token : response.data.access_token });
+		contacts.getContacts({projection: 'full'}, function(err, contacts) {
+			if (err) {
+                console.error(err.message);
+			}
+			res.json(contacts);
+		});
+    }).catch(err => {
+        console.log(err)
+        res.send(false)
+    });
+});
 
 server.use(express.static("client"));
 

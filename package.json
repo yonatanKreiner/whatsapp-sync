@@ -13,10 +13,14 @@
     "url": "https://github.com/sigalor/whatsapp-web-reveng.git"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "express": "^4.16.2",
     "fs": "0.0.1-security",
+    "google-contacts-api": "^1.0.3",
+    "googleapis": "^32.0.0",
     "lodash": "^4.17.4",
     "path": "^0.12.7",
+    "querystring": "^0.2.0",
     "string_decoder": "^1.0.3",
     "ws": "^3.3.2"
   },
