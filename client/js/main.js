@@ -5,23 +5,14 @@ function sleep(ms) {
 	});
 }
 
-$(document).ready(function() {
-	let bootstrapInfo = {
-		activateQRCode: image => {
-			let container = $("#bootstrap-container").removeClass("hidden").children("#bootstrap-container-content");
-			container.children("button").addClass("hidden")
-			container.append($("<img>").attr("src", image));
-			$("#main-container").addClass("hidden");
-		},
-		deactivate: () => {
-			$("#bootstrap-container").addClass("hidden");
-			$("#main-container").removeClass("hidden");
-			$("#button-disconnect").html("Disconnect").attr("disabled", false);
-		}
-	};
+function activateQRCode(image) {
+	let container = $("#bootstrap-container");
+	container.append($("<img>").attr("src", image));
+}
 
+$(document).ready(function() {
 	$.getJSON('/test', data => {
-		bootstrapInfo.activateQRCode(data.image)
+		activateQRCode(data.image)
 	});
 
 	$("#button-disconnect").click(function() {

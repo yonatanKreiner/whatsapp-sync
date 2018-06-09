@@ -12,13 +12,12 @@ let server = express();
 
 server.use(express.static("client"));
 
-server.get('/test', async (req, res) => {
-	let result = await test();
-	res.send(result);
+server.get('/connect', async (req, res) => {
+	res.send(await connect());
 });
 
 server.listen(2018, function() {
-	console.log("whatsapp-web-reveng HTTP server listening on port 2018");
+	console.log("whatsapp-photo-sync HTTP server listening on port 2018");
 });
 
 let backendInfo = {
@@ -26,7 +25,7 @@ let backendInfo = {
 	timeout: 10000
 };
 
-async function test() {
+async function connect() {
 	try {
 		let backendWebsocket = new WebSocketClient();
 
@@ -86,7 +85,7 @@ async function test() {
 			}
 		}).run(backendInfo.timeout));
 
-		return { type: "generated_qr_code", image: backendResponse.data.image };
+		return { image: backendResponse.data.image };
 	} catch (error) {
 		return { type: "error", reason: error };
 	}
