@@ -1,26 +1,24 @@
-let _ = require("lodash");
-let fs = require("fs");
-let path = require("path");
-let {StringDecoder} = require("string_decoder");
-let express = require("express");
-let WebSocket = require("ws");
+const {StringDecoder} = require("string_decoder");
+const express = require("express");
+const WebSocket = require("ws");
 const axios = require('axios');
+const libphonenumber = require('libphonenumber-js');
 const querystring = require('querystring');
-var { google } = require('googleapis');
-var GoogleContacts = require('google-contacts-api');
+const { google } = require('googleapis');
+const GoogleContacts = require('google-contacts-api');
 
-let {WebSocketClient} = require("./client/js/WebSocketClient.js");
-let {BootstrapStep}   = require("./client/js/BootstrapStep.js");
+const {WebSocketClient} = require("./client/js/WebSocketClient.js");
+const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
-let server = express();
+const server = express();
 
 let backendWebsocket;
 
-var CLIENT_ID = '993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com';
-var CLIENT_SECRET = 'OKBleQniLAPT0KKJHs3ld7ZM';
-var REDIRECT_URI = 'http://localhost:2018/authorized';
+const CLIENT_ID = '993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com';
+const CLIENT_SECRET = 'OKBleQniLAPT0KKJHs3ld7ZM';
+const REDIRECT_URI = 'http://localhost:2018/authorized';
 
-let credentials ={
+const credentials ={
 	web: {
 		client_id: "993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com",
 		project_id: "whatsapp-photo-sync",
@@ -32,13 +30,13 @@ let credentials ={
 	}
 }
 
-var oauth2Client = new google.auth.OAuth2(
+const oauth2Client = new google.auth.OAuth2(
     CLIENT_ID,
     CLIENT_SECRET,
     REDIRECT_URI
 );
 
-var url = oauth2Client.generateAuthUrl({
+const url = oauth2Client.generateAuthUrl({
   access_type: 'offline',
   scope: [
     'https://www.google.com/m8/feeds/contacts/default/full',
@@ -51,7 +49,7 @@ server.get('/contacts', (req, res) => {
 });
 
 server.get('/authorized', (req, res) => {
-    var formData =  {
+    const formData =  {
         code: req.query.code,
         client_id: CLIENT_ID,
         client_secret: CLIENT_SECRET,
@@ -61,19 +59,52 @@ server.get('/authorized', (req, res) => {
 
     axios.post('https://www.googleapis.com/oauth2/v4/token', querystring.stringify(formData), {
         headers: { "Content-Type": "application/x-www-form-urlencoded" }
-    }).then(function(response) {
-        var contacts = new GoogleContacts({ token : response.data.access_token });
-		contacts.getContacts({projection: 'full'}, function(err, contacts) {
+    }).then((response) => {
+        const contactsApi = new GoogleContacts({ token : response.data.access_token });
+		contactsApi.getContacts({projection: 'full'}, async (err, contacts) => {
 			if (err) {
                 console.error(err.message);
 			}
-			res.json(contacts);
+			
+			res.json(await parseContacts(contacts));
 		});
     }).catch(err => {
         console.log(err)
         res.send(false)
     });
 });
+
+async function parseContacts(contacts) {
+	let parsedContacts = contacts.map(contact => {
+		let parsedContact = {name: contact.name};
+
+		try {
+			if (contact.phones && contact.phones.length > 0) {
+				const phone = contact.phones[0].field;
+				const number = libphonenumber.parseNumber(phone, 'IL');
+				const parsedPhone = libphonenumber.formatNumber(number, 'E.164');
+				parsedContact.phone = parsedPhone.substr(1, parsedPhone.length - 1);
+			}
+		} catch (err) {
+			console.log (contact);
+		}
+			
+		return parsedContact
+	}).filter(contact => contact.phone)
+	// .map(async contact => {
+	// 	const photo = (await getPhoto(contact.phone)).image;
+	// 	console.log(photo)
+	// 	return Object.assign(contact, { photo } );
+	// });
+
+	let parsed = [];
+
+	for (let index = 0; index < 5; index++) {
+		const photo = (await getPhoto(parsedContacts[index].phone)).image;
+		parsed.push(Object.assign(parsedContacts[index], {photo}));
+	}
+	return parsed;
+}
 
 server.use(express.static("client"));
 
@@ -83,7 +114,7 @@ server.get('/connect', async (req, res) => {
 
 server.get('/photo', async (req, res) => {
 	res.send(await getPhoto('972526053444'));
-})
+});
 
 server.listen(2018, function() {
 	console.log("whatsapp-photo-sync HTTP server listening on port 2018");
