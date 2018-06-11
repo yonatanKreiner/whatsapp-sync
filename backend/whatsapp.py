@@ -97,7 +97,6 @@ class WhatsAppWebClient:
 		self.onOpenCallback = onOpenCallback;
 		self.onMessageCallback = onMessageCallback;
 		self.onCloseCallback = onCloseCallback;
-		websocket.enableTrace(True);
 		self.connect();
 
 	def onOpen(self, ws):
@@ -139,7 +138,7 @@ class WhatsAppWebClient:
 				elif pend["desc"] == "_photo":
 					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
 						jsonObj = json.loads(messageContent);
-						
+
 						if "status" in jsonObj:
 							result = jsonObj["status"];
 						else:
