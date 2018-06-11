@@ -115,7 +115,6 @@ class WebSocketClient {
 					reject(...args);
 				}
 			});
-			//console.log("index ", this.expectedMsgs.length-1, ": registered waitForMessage on", this.whoami, "with condition ", condition.toString());
 		}
 		return (keepWhenHit ? new UpdaterPromise(executor) : new Promise(executor));
 	}

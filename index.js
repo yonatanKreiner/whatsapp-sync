@@ -86,23 +86,26 @@ async function parseContacts(contacts) {
 				parsedContact.phone = parsedPhone.substr(1, parsedPhone.length - 1);
 			}
 		} catch (err) {
-			console.log (contact);
 		}
 			
 		return parsedContact
-	}).filter(contact => contact.phone)
-	// .map(async contact => {
-	// 	const photo = (await getPhoto(contact.phone)).image;
-	// 	console.log(photo)
-	// 	return Object.assign(contact, { photo } );
-	// });
+	}).filter(contact => contact.phone);
+
+	// let result = await Promise.all(parsedContacts.map(contact => {
+	// 	return getPhoto(contact.phone).then(photo => {
+	// 		return Object.assign(contact, { photo: photo.image } );
+	// 	});
+	// }));
+
+	// return result;
 
 	let parsed = [];
 
-	for (let index = 0; index < 5; index++) {
+	for (let index = 0; index < 100; index++) {
 		const photo = (await getPhoto(parsedContacts[index].phone)).image;
 		parsed.push(Object.assign(parsedContacts[index], {photo}));
 	}
+
 	return parsed;
 }
 

@@ -139,7 +139,13 @@ class WhatsAppWebClient:
 				elif pend["desc"] == "_photo":
 					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
 						jsonObj = json.loads(messageContent);
-						pend["callback"]["func"]({ "type": "profile_photo", "image": jsonObj["eurl"]}, pend["callback"])
+						
+						if "status" in jsonObj:
+							result = jsonObj["status"];
+						else:
+							result = jsonObj["eurl"]
+						
+						pend["callback"]["func"]({ "type": "profile_photo", "image": result}, pend["callback"])
 			else:
 				try:
 					jsonObj = json.loads(messageContent);								# try reading as json
