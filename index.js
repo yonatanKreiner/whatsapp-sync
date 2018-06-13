@@ -66,7 +66,16 @@ server.get('/authorized', (req, res) => {
                 console.error(err.message);
 			}
 			
-			res.json(await parseContacts(contacts));
+			let failedContacts = [];
+			const parsedContacts = await parseContacts(contacts);
+			parsedContacts.forEach(contact => {
+				if (contact.photo !== 404 && contact.photo !== 401) {
+					updatePhoto(contact, response.data.access_token);
+				} else {
+					failedContacts.push(contact);
+				}
+			});
+			res.json(failedContacts);
 		});
     }).catch(err => {
         console.log(err)
@@ -76,7 +85,7 @@ server.get('/authorized', (req, res) => {
 
 async function parseContacts(contacts) {
 	let parsedContacts = contacts.map(contact => {
-		let parsedContact = {name: contact.name};
+		let parsedContact = {name: contact.name, photoUrl: contact.photo};
 
 		try {
 			if (contact.phones && contact.phones.length > 0) {
@@ -109,14 +118,31 @@ async function parseContacts(contacts) {
 	return parsed;
 }
 
+function updatePhoto(contact, token) {
+	headers = {
+		'Content-Type': 'image/jpeg',
+		'Authorization': 'Bearer ' + token,
+		'If-Match': '*'
+	}
+
+	axios.get(contact.photo, {
+		responseType: 'arraybuffer'
+	}).then(response => {
+		const picture = new Buffer(response.data, 'binary');
+		console.log(picture)
+		axios.put(contact.photoUrl, picture, {headers: headers})
+			.catch(err => {
+				console.log(err);
+			});
+	}).catch(err => {
+		console.log(err);
+	});
+}
+
 server.use(express.static("client"));
 
 server.get('/connect', async (req, res) => {
 	res.send(await connect());
-});
-
-server.get('/photo', async (req, res) => {
-	res.send(await getPhoto('972526053444'));
 });
 
 server.listen(2018, function() {
