@@ -1,11 +1,8 @@
 const {StringDecoder} = require("string_decoder");
 const express = require("express");
 const WebSocket = require("ws");
-const axios = require('axios');
-const libphonenumber = require('libphonenumber-js');
-const querystring = require('querystring');
-const { google } = require('googleapis');
-const GoogleContacts = require('google-contacts-api');
+
+const googleContacts = require('./googleContacts');
 
 const {WebSocketClient} = require("./client/js/WebSocketClient.js");
 const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
@@ -14,129 +11,39 @@ const server = express();
 
 let backendWebsocket;
 
-const CLIENT_ID = '993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com';
-const CLIENT_SECRET = 'OKBleQniLAPT0KKJHs3ld7ZM';
-const REDIRECT_URI = 'http://localhost:2018/authorized';
-
-const credentials ={
-	web: {
-		client_id: "993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com",
-		project_id: "whatsapp-photo-sync",
-		auth_uri: "https://accounts.google.com/o/oauth2/auth",
-		token_uri: "https://accounts.google.com/o/oauth2/token",
-		auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
-		client_secret: "OKBleQniLAPT0KKJHs3ld7ZM",
-		redirect_uris: ["http://localhost:2018/authorized"]
-	}
-}
-
-const oauth2Client = new google.auth.OAuth2(
-    CLIENT_ID,
-    CLIENT_SECRET,
-    REDIRECT_URI
-);
-
-const url = oauth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: [
-    'https://www.google.com/m8/feeds/contacts/default/full',
-    'https://www.google.com/m8/feeds/photos/media/default/'
-  ]
-});
-
 server.get('/contacts', (req, res) => {
-    res.redirect(url);
+    res.redirect(googleContacts.url);
 });
 
-server.get('/authorized', (req, res) => {
-    const formData =  {
-        code: req.query.code,
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        redirect_uri: REDIRECT_URI
-    };
-
-    axios.post('https://www.googleapis.com/oauth2/v4/token', querystring.stringify(formData), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-    }).then((response) => {
-        const contactsApi = new GoogleContacts({ token : response.data.access_token });
-		contactsApi.getContacts({projection: 'full'}, async (err, contacts) => {
-			if (err) {
-                console.error(err.message);
-			}
-			
-			let failedContacts = [];
-			const parsedContacts = await parseContacts(contacts);
-			parsedContacts.forEach(contact => {
-				if (contact.photo !== 404 && contact.photo !== 401) {
-					updatePhoto(contact, response.data.access_token);
-				} else {
-					failedContacts.push(contact);
-				}
-			});
-			res.json(failedContacts);
+server.get('/authorized', async (req, res) => {	
+	const accessToken = await googleContacts.getAccessToken(req.query.code);
+	
+	if (accessToken === null) {
+		res.json('fail');
+	} else {
+		googleContacts.getContacts(accessToken, async (contacts) => {
+			updatePhotos(contacts, accessToken);
+			res.json('executing');
 		});
-    }).catch(err => {
-        console.log(err)
-        res.send(false)
-    });
+	}
 });
 
-async function parseContacts(contacts) {
-	let parsedContacts = contacts.map(contact => {
-		let parsedContact = {name: contact.name, photoUrl: contact.photo};
+async function updatePhotos(contacts, accessToken) {
+	const parsedContacts = await googleContacts.parseContacts(contacts);
+	let failedContacts = [];
 
-		try {
-			if (contact.phones && contact.phones.length > 0) {
-				const phone = contact.phones[0].field;
-				const number = libphonenumber.parseNumber(phone, 'IL');
-				const parsedPhone = libphonenumber.formatNumber(number, 'E.164');
-				parsedContact.phone = parsedPhone.substr(1, parsedPhone.length - 1);
-			}
-		} catch (err) {
-		}
-			
-		return parsedContact
-	}).filter(contact => contact.phone);
-
-	// let result = await Promise.all(parsedContacts.map(contact => {
-	// 	return getPhoto(contact.phone).then(photo => {
-	// 		return Object.assign(contact, { photo: photo.image } );
-	// 	});
-	// }));
-
-	// return result;
-
-	let parsed = [];
-
-	for (let index = 0; index < 100; index++) {
+	for (let index = 0; index < parsedContacts.length; index++) {
 		const photo = (await getPhoto(parsedContacts[index].phone)).image;
-		parsed.push(Object.assign(parsedContacts[index], {photo}));
+		const contact = Object.assign(parsedContacts[index], {photo});
+
+		if (contact.photo !== 404 && contact.photo !== 401) {
+            await googleContacts.updatePhoto(contact, accessToken);
+        } else {
+            failedContacts.push(contact);
+        }
 	}
 
-	return parsed;
-}
-
-function updatePhoto(contact, token) {
-	headers = {
-		'Content-Type': 'image/jpeg',
-		'Authorization': 'Bearer ' + token,
-		'If-Match': '*'
-	}
-
-	axios.get(contact.photo, {
-		responseType: 'arraybuffer'
-	}).then(response => {
-		const picture = new Buffer(response.data, 'binary');
-		console.log(picture)
-		axios.put(contact.photoUrl, picture, {headers: headers})
-			.catch(err => {
-				console.log(err);
-			});
-	}).catch(err => {
-		console.log(err);
-	});
+	return failedContacts;
 }
 
 server.use(express.static("client"));
