@@ -9,7 +9,7 @@ const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
 const server = express();
 
-let backendWebsocket;
+let backendWebsockets = {};
 
 server.get('/contacts', (req, res) => {
     res.redirect(googleContacts.url);
@@ -22,18 +22,18 @@ server.get('/authorized', async (req, res) => {
 		res.json('fail');
 	} else {
 		googleContacts.getContacts(accessToken, async (contacts) => {
-			updatePhotos(contacts, accessToken);
+			updatePhotos(req.query.state, contacts, accessToken);
 			res.json('executing');
 		});
 	}
 });
 
-async function updatePhotos(contacts, accessToken) {
+async function updatePhotos(id, contacts, accessToken) {
 	const parsedContacts = await googleContacts.parseContacts(contacts);
 	let failedContacts = [];
 
 	for (let index = 0; index < parsedContacts.length; index++) {
-		const photo = (await getPhoto(parsedContacts[index].phone)).image;
+		const photo = (await getPhoto(id, parsedContacts[index].phone)).image;
 		const contact = Object.assign(parsedContacts[index], {photo});
 
 		if (contact.photo !== 404 && contact.photo !== 401) {
@@ -43,13 +43,15 @@ async function updatePhotos(contacts, accessToken) {
         }
 	}
 
+	console.log('finished');
+
 	return failedContacts;
 }
 
 server.use(express.static("client"));
 
 server.get('/connect', async (req, res) => {
-	res.send(await connect());
+	res.send(await connect(req.query.id));
 });
 
 server.listen(2018, function() {
@@ -61,9 +63,10 @@ let backendInfo = {
 	timeout: 10000
 };
 
-async function connect() {
+async function connect(id) {
 	try {
-		backendWebsocket = new WebSocketClient();
+		backendWebsockets[id] = new WebSocketClient();
+		backendWebsocket = backendWebsockets[id];
 
 		if(backendWebsocket.isOpen){
 			return;
@@ -82,7 +85,7 @@ async function connect() {
 				condition: obj => obj.from == "backend"  &&  obj.type == "connected"
 			}
 		}).run(backendInfo.timeout))
-
+		console.log(backendResponse)
 		console.log('api connected to backend');
 
 		if(!backendWebsocket.isOpen) {
@@ -127,11 +130,14 @@ async function connect() {
 	}
 }
 
-async function getPhoto(phone) {
+async function getPhoto(id, phone) {
 	try {
+		backendWebsocket = backendWebsockets[id];
+
 		if(!backendWebsocket.isOpen) {
 			throw { type: "error", reason: "No backend connected." };
 		}
+
 		let backendResponse = await (new BootstrapStep({
 			websocket: backendWebsocket,
 			request: {

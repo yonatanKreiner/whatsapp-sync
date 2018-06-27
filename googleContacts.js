@@ -25,7 +25,8 @@ const url = oauth2Client.generateAuthUrl({
   scope: [
     'https://www.google.com/m8/feeds/contacts/default/full',
     'https://www.google.com/m8/feeds/photos/media/default/'
-  ]
+  ],
+  state: '123'
 });
 
 async function getAccessToken(code) {

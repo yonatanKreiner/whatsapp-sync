@@ -1,10 +1,3 @@
-
-function sleep(ms) {
-	return new Promise((resolve, reject) => {
-		setTimeout(() => resolve(), ms);
-	});
-}
-
 function activateQRCode(image) {
 	let container = $("#bootstrap-container");
 	container.prepend($("<img>").attr("src", image));
