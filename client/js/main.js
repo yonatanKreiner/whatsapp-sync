@@ -1,3 +1,5 @@
+// const uuid = require('uuid');
+
 function activateQRCode(image) {
 	let container = $("#bootstrap-container");
 	container.prepend($("<img>").attr("src", image));
@@ -6,10 +8,10 @@ function activateQRCode(image) {
 
 $(document).ready(function() {
 	$("#button-contacts").click(function() {
-		window.location.href = '/contacts'; 
+		window.location.href = '/contacts?id=123'; 
 	});
 
-	$.getJSON('/connect', data => {
+	$.getJSON('/connect?id=123', data => {
 		activateQRCode(data.image)
 	});
 

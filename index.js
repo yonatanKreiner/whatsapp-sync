@@ -12,7 +12,7 @@ const server = express();
 let backendWebsockets = {};
 
 server.get('/contacts', (req, res) => {
-    res.redirect(googleContacts.url);
+    res.redirect(googleContacts.getUrl(req.query.id));
 });
 
 server.get('/authorized', async (req, res) => {	
@@ -32,7 +32,7 @@ async function updatePhotos(id, contacts, accessToken) {
 	const parsedContacts = await googleContacts.parseContacts(contacts);
 	let failedContacts = [];
 
-	for (let index = 0; index < parsedContacts.length; index++) {
+	for (let index = 0; index < 5; index++) {
 		const photo = (await getPhoto(id, parsedContacts[index].phone)).image;
 		const contact = Object.assign(parsedContacts[index], {photo});
 
@@ -66,7 +66,7 @@ let backendInfo = {
 async function connect(id) {
 	try {
 		backendWebsockets[id] = new WebSocketClient();
-		backendWebsocket = backendWebsockets[id];
+		let backendWebsocket = backendWebsockets[id];
 
 		if(backendWebsocket.isOpen){
 			return;
@@ -85,7 +85,6 @@ async function connect(id) {
 				condition: obj => obj.from == "backend"  &&  obj.type == "connected"
 			}
 		}).run(backendInfo.timeout))
-		console.log(backendResponse)
 		console.log('api connected to backend');
 
 		if(!backendWebsocket.isOpen) {
@@ -132,7 +131,7 @@ async function connect(id) {
 
 async function getPhoto(id, phone) {
 	try {
-		backendWebsocket = backendWebsockets[id];
+		let backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
 			throw { type: "error", reason: "No backend connected." };

@@ -20,14 +20,16 @@ const oauth2Client = new google.auth.OAuth2(
     credentials.redirect_uris[0]
 );
 
-const url = oauth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: [
-    'https://www.google.com/m8/feeds/contacts/default/full',
-    'https://www.google.com/m8/feeds/photos/media/default/'
-  ],
-  state: '123'
-});
+function getUrl(id) {
+    return oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        scope: [
+          'https://www.google.com/m8/feeds/contacts/default/full',
+          'https://www.google.com/m8/feeds/photos/media/default/'
+        ],
+        state: id
+      });
+}
 
 async function getAccessToken(code) {
     const formData =  {
@@ -91,11 +93,12 @@ async function updatePhoto(contact, token) {
 
     try {
         const response = await axios.get(contact.photo, { responseType: 'arraybuffer' });
-        const picture = new Buffer(response.data, 'binary');
+        const picture = new Buffer.from(response.data, 'binary');
         await axios.put(contact.photoUrl, picture, {headers: headers});
     } catch (err) {
+        console.error(err)
         console.error('failed update ' + contact.name);
     }
 }
 
-module.exports = { url, getAccessToken, getContacts, parseContacts, updatePhoto };
+module.exports = { getUrl, getAccessToken, getContacts, parseContacts, updatePhoto };

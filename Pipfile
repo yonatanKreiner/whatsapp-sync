@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+[packages]
+websocket-client = "*"
+"curve25519-donna" = "*"
+pycrypto = "*"
+protobuf = "*"
+PyQRCode = "*"
+simplewebsocketserver = {git = "https://github.com/dpallot/simple-websocket-server.git"}
+
+[requires]
+python_version = "2.7"

@@ -4,7 +4,9 @@
   "description": "A graphical, web-based client for WhatsApp Web, using the reverse engineered Python code as backend.",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently --kill-others \"nodemon index.js -i client -e js\" \"nodemon --exec python ./backend/whatsapp_web_backend.py -i client -e py\""
+    "start:backend": "nodemon --exec python ./backend/whatsapp_web_backend.py -i client -e py",
+    "start:server": "nodemon index.js -i client -e js",
+    "start": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\""
   },
   "author": "sigalor",
   "license": "MIT",
@@ -22,6 +24,7 @@
     "path": "^0.12.7",
     "querystring": "^0.2.0",
     "string_decoder": "^1.0.3",
+    "uuid": "^3.3.2",
     "ws": "^3.3.2"
   },
   "devDependencies": {
