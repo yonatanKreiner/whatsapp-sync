@@ -17,7 +17,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "express": "^4.16.2",
-    "google-contacts-api": "^1.0.3",
+    "google-contacts-api-wrapper": "^1.0.4",
     "googleapis": "^32.0.0",
     "libphonenumber-js": "^1.2.15",
     "lodash": "^4.17.4",

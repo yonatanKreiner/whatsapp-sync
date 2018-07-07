@@ -2,7 +2,7 @@ const querystring = require('querystring');
 const axios = require('axios');
 const libphonenumber = require('libphonenumber-js');
 const { google } = require('googleapis');
-const GoogleContacts = require('google-contacts-api');
+const GoogleContacts = require('google-contacts-api-wrapper');
 
 const credentials = {
     client_id: "993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com",

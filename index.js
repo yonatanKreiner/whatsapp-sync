@@ -32,7 +32,7 @@ async function updatePhotos(id, contacts, accessToken) {
 	const parsedContacts = await googleContacts.parseContacts(contacts);
 	let failedContacts = [];
 
-	for (let index = 0; index < 5; index++) {
+	for (let index = 0; index < parsedContacts.length; index++) {
 		const photo = (await getPhoto(id, parsedContacts[index].phone)).image;
 		const contact = Object.assign(parsedContacts[index], {photo});
 
