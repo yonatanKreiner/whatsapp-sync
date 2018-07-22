@@ -7,6 +7,8 @@ const googleContacts = require('./googleContacts');
 const {WebSocketClient} = require("./client/js/WebSocketClient.js");
 const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
+const port = process.env.PORT || 3000;
+
 const server = express();
 
 let backendWebsockets = {};
@@ -54,8 +56,8 @@ server.get('/connect', async (req, res) => {
 	res.send(await connect(req.query.id));
 });
 
-server.listen(2018, function() {
-	console.log("whatsapp-photo-sync HTTP server listening on port 2018");
+server.listen(port, function() {
+	console.log(`whatsapp-photo-sync HTTP server listening on port ${port}`);
 });
 
 let backendInfo = {

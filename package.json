@@ -6,7 +6,8 @@
   "scripts": {
     "start:backend": "nodemon --exec python ./backend/whatsapp_web_backend.py -i client -e py",
     "start:server": "nodemon index.js -i client -e js",
-    "start": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\""
+    "start:dev": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\"",
+    "start": "PORT=443 node index.js"
   },
   "author": "sigalor",
   "license": "MIT",
