@@ -4,10 +4,10 @@
   "description": "A graphical, web-based client for WhatsApp Web, using the reverse engineered Python code as backend.",
   "main": "index.js",
   "scripts": {
-    "start:backend": "nodemon --exec python ./backend/whatsapp_web_backend.py -i client -e py",
+    "start:backend": "nodemon --exec python ../backend/whatsapp_web_backend.py -i client -e py",
     "start:server": "nodemon index.js -i client -e js",
     "start:dev": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\"",
-    "start": "PORT=443 node index.js"
+    "start": "PORT=443 BACKEND=test REDIRECT=test2 node index.js"
   },
   "engines": { 
     "node" : ">=10.0.0" 

@@ -11,7 +11,7 @@ const credentials = {
     token_uri: "https://accounts.google.com/o/oauth2/token",
     auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
     client_secret: "OKBleQniLAPT0KKJHs3ld7ZM",
-    redirect_uris: ["http://localhost:2018/authorized"]
+    redirect_uris: [process.env.REDIRECT || "http://localhost:2018/authorized"]
 }
 
 const oauth2Client = new google.auth.OAuth2(
