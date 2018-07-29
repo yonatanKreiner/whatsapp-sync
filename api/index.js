@@ -7,7 +7,7 @@ const googleContacts = require('./googleContacts');
 const {WebSocketClient} = require("./client/js/WebSocketClient.js");
 const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
 
-const port = process.env.PORT || 2018;
+const port = process.env.PORT || 8080;
 
 const server = express();
 

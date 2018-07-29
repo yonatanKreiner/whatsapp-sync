@@ -7,10 +7,10 @@
     "start:backend": "nodemon --exec python ../backend/whatsapp_web_backend.py -i client -e py",
     "start:server": "nodemon index.js -i client -e js",
     "start:dev": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\"",
-    "start": "PORT=443 BACKEND=test REDIRECT=test2 node index.js"
+    "start": "BACKEND=test REDIRECT=https://whatsapp-photo-sync.appspot.com/authorized node index.js"
   },
   "engines": { 
-    "node" : ">=10.0.0" 
+    "node" : ">8.0.0" 
   },
   "author": "sigalor",
   "license": "MIT",
