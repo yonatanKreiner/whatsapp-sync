@@ -107,6 +107,7 @@ class WhatsAppWeb(WebSocket):
 		whatsapp.disconnect();
 		eprint(self.address, "closed connection to backend");
 
-server = SimpleWebSocketServer("", 2020, WhatsAppWeb);
-eprint("whatsapp-photo-sync backend listening on port 2020");
+port = os.environ.get('PORT') or 2020;
+server = SimpleWebSocketServer("", int(port), WhatsAppWeb);
+eprint("whatsapp-photo-sync backend listening on port " + str(port));
 server.serveforever();

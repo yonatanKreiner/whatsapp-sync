@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080;
 const server = express();
 
 const backendInfo = {
-	url: `ws://${process.env.BACKEND || 'localhost'}:2020`,
+	url: `ws://${process.env.BACKEND || 'localhost:2020'}`,
 	timeout: 10000
 };
 

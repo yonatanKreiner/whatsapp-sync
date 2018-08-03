@@ -149,9 +149,12 @@ class WhatsAppWebClient:
 				try:
 					jsonObj = json.loads(messageContent);								# try reading as json
 				except ValueError, e:
+					eprint(e)
 					if messageContent != "":
 						hmacValidation = HmacSha256(self.loginInfo["key"]["macKey"], messageContent[32:]);
 						if hmacValidation != messageContent[:32]:
+							eprint(hmacValidation)
+							eprint(messageContent[:32])
 							raise ValueError("Hmac mismatch");
 						
 						decryptedMessage = AESDecrypt(self.loginInfo["key"]["encKey"], messageContent[32:]);
@@ -167,6 +170,7 @@ class WhatsAppWebClient:
 					self.onMessageCallback["func"](jsonObj, self.onMessageCallback, { "message_type": "json" });
 					if isinstance(jsonObj, list) and len(jsonObj) > 0:					# check if the result is an array
 						if jsonObj[0] == "Conn":
+							eprint(jsonObj[1])
 							self.connInfo["clientToken"] = jsonObj[1]["clientToken"];
 							self.connInfo["serverToken"] = jsonObj[1]["serverToken"];
 							self.connInfo["browserToken"] = jsonObj[1]["browserToken"];

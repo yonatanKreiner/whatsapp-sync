@@ -1,0 +1,7 @@
+entrypoint: python whatsapp_web_backend.py
+env: flex
+runtime: python
+network:
+  forwarded_ports:
+  - 2020
+  instance_tag: websocket
