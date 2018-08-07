@@ -149,7 +149,6 @@ class WhatsAppWebClient:
 				try:
 					jsonObj = json.loads(messageContent);								# try reading as json
 				except ValueError, e:
-					eprint(e)
 					if messageContent != "":
 						hmacValidation = HmacSha256(self.loginInfo["key"]["macKey"], messageContent[32:]);
 						if hmacValidation != messageContent[:32]:

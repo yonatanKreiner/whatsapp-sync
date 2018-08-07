@@ -4,7 +4,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		
-		<title>WhatsApp Web</title>
+		<title>WhatsAppSync</title>
 		
 		<!-- stylesheets -->
 		<link rel="stylesheet" href="lib/bootstrap/css/bootstrap.min.css">
@@ -32,9 +32,52 @@
 		<script type="text/javascript" src="js/main.js"></script>
 	</head>
 	<body>
-		<div id="bootstrap-container">
-			<br /><br /><br />
-			<button id="button-contacts" class="btn" disabled>Import</button>
+		<div class="navbar">
+			<div id="logo">
+				WhatsAppSync
+			</div>
 		</div>
+		<div class="container">
+			<div class="content">
+				<div id="qr">
+					<div id="bootstrap-container">
+						<br /><br /><br />
+						<button id="button-contacts" class="btn" disabled>Import</button>
+					</div>
+				</div>
+				<div class="text">
+					<h1>Synchronize your phone contacts with WhatsApp photos</h1>
+					WhatsAppSync is a simple solution for adding photos to phone contacts.
+				</div>
+			</div>
+			
+			<div class="howTo">
+				<div id="item1" class="item">
+					<div class="text">
+						<h1>Step 1</h1>
+						Open WhatsApp on your phone. Click on the options menu (3 dots on top), and choose "WhatsApp Web" option.<br />
+						Scan the QR code on this website.
+					</div>
+				</div>
+				<div id="item2" class="item">
+					<div class="text">
+					<h1>Step 2</h1>
+					Click the import button below the QR code and connect with your Google account.<br/>
+					Allow WhatsAppSync to access your Google contacts by clicking authorize after authenticating to Google.
+				</div>
+				<div class="img-container">
+					<img id="screenshot" src="./assets/contact.png">
+				</div>
+				</div>
+			</div>
+		</div>
+		
+		<footer>
+			<div>
+				<br />
+				Not affiliated with WhatsApp and we don't host any of the WhatsApp profile picturses on this website, all rights belong to their respective owners.<br />
+				2018 © WhatsAppSync
+			</div>
+		</footer>
 	</body>
 </html>
