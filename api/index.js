@@ -11,12 +11,28 @@ const port = process.env.PORT || 8080;
 
 const server = express();
 
+server.set('view engine', 'ejs');
+server.set('views', 'client/views');
+
 const backendInfo = {
 	url: `ws://${process.env.BACKEND || 'localhost:2020'}`,
 	timeout: 10000
 };
 
 let backendWebsockets = {};
+let userContacts = {};
+
+server.use(express.static("client"));
+
+server.get('/progress', (req, res) => {
+	const id = req.query.id;
+	if (userContacts.hasOwnProperty(id)) {
+		const percentage = parseInt(userContacts[id].index / userContacts[id].parsedContacts.length * 100)
+		res.json({percentage});
+	} else {
+		res.status(400).send('bad id');
+	}
+});
 
 server.get('/contacts', (req, res) => {
     res.redirect(googleContacts.getUrl(req.query.id));
@@ -30,32 +46,32 @@ server.get('/authorized', async (req, res) => {
 	} else {
 		googleContacts.getContacts(accessToken, async (contacts) => {
 			updatePhotos(req.query.state, contacts, accessToken);
-			res.json('executing');
+			res.render('finish', {user: req.query.state});
 		});
 	}
 });
 
 async function updatePhotos(id, contacts, accessToken) {
-	const parsedContacts = await googleContacts.parseContacts(contacts);
-	let failedContacts = [];
+	userContacts[id] = {
+		parsedContacts: await googleContacts.parseContacts(contacts),
+		failedContacts: []
+	};
 
-	for (let index = 0; index < parsedContacts.length; index++) {
-		const photo = (await getPhoto(id, parsedContacts[index].phone)).image;
-		const contact = Object.assign(parsedContacts[index], {photo});
+	for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
+		userContacts[id].index = index;
+		let contact = userContacts[id].parsedContacts[index];
+		contact.photo = (await getPhoto(id, contact.phone)).image;
 
 		if (contact.photo !== 404 && contact.photo !== 401) {
             await googleContacts.updatePhoto(contact, accessToken);
         } else {
-            failedContacts.push(contact);
+            userContacts[id].failedContacts.push(contact);
         }
 	}
 
+	delete userContacts[id];
 	console.log('finished');
-
-	return failedContacts;
 }
-
-server.use(express.static("client"));
 
 server.get('/connect', async (req, res) => {
 	res.send(await connect(req.query.id));

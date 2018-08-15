@@ -5,7 +5,7 @@ function activateQRCode(image) {
 }
 
 $(document).ready(function() {
-	var user = uuidv4();
+	let user = uuidv4();
 
 	$("#button-contacts").click(function() {
 		window.location.href = '/contacts?id=' + user; 

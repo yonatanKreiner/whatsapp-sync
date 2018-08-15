@@ -9,8 +9,8 @@
     "start:dev": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\"",
     "start": "BACKEND=35.226.193.63:80 REDIRECT=https://whatsappsync.com/authorized node index.js"
   },
-  "engines": { 
-    "node" : ">8.0.0" 
+  "engines": {
+    "node": ">8.0.0"
   },
   "author": "sigalor",
   "license": "MIT",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "ejs": "^2.6.1",
     "express": "^4.16.2",
     "google-contacts-api-wrapper": "^1.0.4",
     "googleapis": "^32.0.0",

@@ -1,2 +1,4 @@
-env: flex
-runtime: nodejs
+runtime: nodejs8
+instance_class: B8
+manual_scaling:
+  instances: 1
