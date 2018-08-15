@@ -125,16 +125,24 @@ class WhatsAppWebClient:
 			
 			if messageTag in self.messageQueue:											# when the server responds to a client's message
 				pend = self.messageQueue[messageTag];
-				if pend["desc"] == "_login":
-					self.loginInfo["serverRef"] = json.loads(messageContent)["ref"];
-					self.loginInfo["privateKey"] = curve25519.Private();
-					self.loginInfo["publicKey"] = self.loginInfo["privateKey"].get_public();
-					qrCodeContents = self.loginInfo["serverRef"] + "," + base64.b64encode(self.loginInfo["publicKey"].serialize()) + "," + self.loginInfo["clientId"];
+				if pend["desc"] == "_login" or pend["desc"] == "_refresh":
+					if pend["desc"] == "_login":
+						self.loginInfo["privateKey"] = curve25519.Private();
+						self.loginInfo["publicKey"] = self.loginInfo["privateKey"].get_public();
+					
+					content = json.loads(messageContent);
 
-					svgBuffer = io.BytesIO();											# from https://github.com/mnooner256/pyqrcode/issues/39#issuecomment-207621532
-					pyqrcode.create(qrCodeContents, error='L').svg(svgBuffer, scale=6, background="rgba(0,0,0,0.0)", module_color="#122E31", quiet_zone=0);
-					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
-						pend["callback"]["func"]({ "type": "generated_qr_code", "image": "data:image/svg+xml;base64," + base64.b64encode(svgBuffer.getvalue()), "content": qrCodeContents }, pend["callback"]);
+					if "ref" not in content:
+						pend["callback"]["func"]({ "type": "generated_qr_code", "image": "scanned" }, pend["callback"]);
+					else:
+						self.loginInfo["serverRef"] = content["ref"];
+						qrCodeContents = self.loginInfo["serverRef"] + "," + base64.b64encode(self.loginInfo["publicKey"].serialize()) + "," + self.loginInfo["clientId"];
+						
+						svgBuffer = io.BytesIO();											# from https://github.com/mnooner256/pyqrcode/issues/39#issuecomment-207621532
+						pyqrcode.create(qrCodeContents, error='L').svg(svgBuffer, scale=6, background="rgba(0,0,0,0.0)", module_color="#122E31", quiet_zone=0);
+						
+						if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
+							pend["callback"]["func"]({ "type": "generated_qr_code", "image": "data:image/svg+xml;base64," + base64.b64encode(svgBuffer.getvalue()), "content": qrCodeContents }, pend["callback"]);
 				elif pend["desc"] == "_photo":
 					if "callback" in pend and pend["callback"] is not None and "func" in pend["callback"] and pend["callback"]["func"] is not None and "tag" in pend["callback"] and pend["callback"]["tag"] is not None:
 						jsonObj = json.loads(messageContent);
@@ -169,7 +177,6 @@ class WhatsAppWebClient:
 					self.onMessageCallback["func"](jsonObj, self.onMessageCallback, { "message_type": "json" });
 					if isinstance(jsonObj, list) and len(jsonObj) > 0:					# check if the result is an array
 						if jsonObj[0] == "Conn":
-							eprint(jsonObj[1])
 							self.connInfo["clientToken"] = jsonObj[1]["clientToken"];
 							self.connInfo["serverToken"] = jsonObj[1]["serverToken"];
 							self.connInfo["browserToken"] = jsonObj[1]["browserToken"];
@@ -212,6 +219,12 @@ class WhatsAppWebClient:
 		messageTag = str(getTimestamp());
 		self.messageQueue[messageTag] = { "desc": "_login", "callback": callback };
 		message = messageTag + ',["admin","init",[0,2,9547],["Chromium at ' + datetime.datetime.now().isoformat() + '","Chromium"],"' + self.loginInfo["clientId"] + '",true]';
+		self.activeWs.send(message);
+	
+	def regenerateQRCode(self, callback=None):
+		messageTag = str(getTimestamp());
+		self.messageQueue[messageTag] = { "desc": "_refresh", "callback": callback };
+		message = messageTag + ',["admin","Conn","reref"]';
 		self.activeWs.send(message);
 	
 	def getPhoto(self, phone, callback=None):

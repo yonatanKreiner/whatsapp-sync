@@ -52,29 +52,37 @@ server.get('/authorized', async (req, res) => {
 });
 
 async function updatePhotos(id, contacts, accessToken) {
-	userContacts[id] = {
-		parsedContacts: await googleContacts.parseContacts(contacts),
-		failedContacts: []
-	};
-
-	for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
-		userContacts[id].index = index;
-		let contact = userContacts[id].parsedContacts[index];
-		contact.photo = (await getPhoto(id, contact.phone)).image;
-
-		if (contact.photo !== 404 && contact.photo !== 401) {
-            await googleContacts.updatePhoto(contact, accessToken);
-        } else {
-            userContacts[id].failedContacts.push(contact);
-        }
+	try	{
+		userContacts[id] = {
+			parsedContacts: await googleContacts.parseContacts(contacts),
+			failedContacts: []
+		};
+	
+		for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
+			userContacts[id].index = index;
+			let contact = userContacts[id].parsedContacts[index];
+			contact.photo = (await getPhoto(id, contact.phone)).image;
+	
+			if (contact.photo !== 404 && contact.photo !== 401) {
+				await googleContacts.updatePhoto(contact, accessToken);
+			} else {
+				userContacts[id].failedContacts.push(contact);
+			}
+		}
+	
+		delete userContacts[id];
+		console.log('finished');
+	} catch (err) {
+		console.log('error updating photos: ' + err.message);
 	}
-
-	delete userContacts[id];
-	console.log('finished');
 }
 
 server.get('/connect', async (req, res) => {
 	res.send(await connect(req.query.id));
+});
+
+server.get('/refresh', async (req, res) => {
+	res.send(await refreshQR(req.query.id));
 });
 
 server.listen(port, function() {
@@ -144,6 +152,29 @@ async function connect(id) {
 		return { type: 'generated_qr_code', image: backendResponse.data.image };
 	} catch (error) {
 		return { type: "error", reason: error };
+	}
+}
+
+async function refreshQR(id) {
+	try {
+		let backendWebsocket = backendWebsockets[id];
+
+		if(!backendWebsocket.isOpen) {
+			throw { type: "error", reason: "No backend connected." };
+		}
+
+		let backendResponse = await (new BootstrapStep({
+			websocket: backendWebsocket,
+			request: {
+				type: "call",
+				callArgs: { command: "backend-regenerateQRCode", whatsapp_instance_id: backendWebsocket.activeWhatsAppInstanceId },
+				successCondition: obj => obj.from == "backend"  &&  obj.type == "generated_qr_code"  &&  obj.image
+			}
+		}).run(backendInfo.timeout));
+
+		return { type: 'generated_qr_code', image: backendResponse.data.image };
+	} catch (error) {
+		return { type: "error", reason: error }
 	}
 }
 

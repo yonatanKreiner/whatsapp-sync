@@ -87,6 +87,8 @@ class WhatsAppWeb(WebSocket):
 					cmd = obj["command"];
 					if cmd == "backend-generateQRCode":
 						currWhatsAppInstance.generateQRCode(callback);
+					elif cmd == "backend-regenerateQRCode":
+						currWhatsAppInstance.regenerateQRCode(callback);
 					elif cmd == "backend-getPhoto":
 						currWhatsAppInstance.getPhoto(obj["phone"], callback);
 					elif cmd == "backend-getLoginInfo":
