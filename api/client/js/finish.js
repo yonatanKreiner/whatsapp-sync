@@ -1,7 +1,14 @@
 function checkProgress(user) {
-    setInterval(() => {
+    var progressIntervalId = setInterval(() => {
         $.getJSON('/progress?id=' + user, data => {
-            $('#progress').text(`${data.percentage}%`);
+            if (data === 'No such user') {
+                clearInterval(progressIntervalId);
+                $.getJSON('/disconnect?id=' + user, data => {
+                    alert(data);
+                });
+            } else {
+                $('#progress').text(`${data.percentage}%`);
+            }
         });
     }, 3000);
 }
