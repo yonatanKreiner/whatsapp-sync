@@ -48,13 +48,14 @@ async function getAccessToken(code) {
         return response.data.access_token;
     } catch (err) {
         console.log('failed getting token');
+        console.error(err.stack);
         return null;
     }
 }
 
-async function getContacts(accessToken, callback) {
+function getContacts(accessToken, callback) {
     const contactsApi = new GoogleContacts({ token: accessToken });
-	contactsApi.getContacts({projection: 'full'}, async (err, contacts) => {
+	contactsApi.getContacts({projection: 'full'}, (err, contacts) => {
 		if (err) {
 			console.error(err.message);
         }

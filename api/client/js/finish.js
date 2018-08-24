@@ -1,6 +1,7 @@
 function checkProgress(user) {
     var progressIntervalId = setInterval(() => {
         $.getJSON('/progress?id=' + user, data => {
+            console.log(data)
             if (data === 'No such user') {
                 clearInterval(progressIntervalId);
                 $.getJSON('/disconnect?id=' + user, data => {

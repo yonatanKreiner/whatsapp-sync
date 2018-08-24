@@ -25,14 +25,12 @@
     "google-contacts-api-wrapper": "^1.0.4",
     "googleapis": "^32.0.0",
     "libphonenumber-js": "^1.2.15",
-    "lodash": "^4.17.4",
-    "path": "^0.12.7",
     "querystring": "^0.2.0",
     "string_decoder": "^1.0.3",
     "ws": "^3.3.2"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
-    "nodemon": "^1.12.5"
+    "nodemon": "^1.18.3"
   }
 }

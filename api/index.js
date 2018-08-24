@@ -12,7 +12,7 @@ const port = process.env.PORT || 8080;
 const server = express();
 
 server.set('view engine', 'ejs');
-server.set('views', 'client/views');
+server.set('views', __dirname + '/client/views');
 
 const backendInfo = {
 	url: `ws://${process.env.BACKEND || 'localhost:2020'}`,
@@ -22,7 +22,7 @@ const backendInfo = {
 let backendWebsockets = {};
 let userContacts = {};
 
-server.use(express.static("client"));
+server.use(express.static(__dirname + "/client"));
 
 server.get('/progress', (req, res) => {
 	const id = req.query.id;
@@ -44,7 +44,7 @@ server.get('/authorized', async (req, res) => {
 	if (accessToken === null) {
 		res.json('fail');
 	} else {
-		googleContacts.getContacts(accessToken, async (contacts) => {
+		googleContacts.getContacts(accessToken, contacts => {
 			updatePhotos(req.query.state, contacts, accessToken);
 			res.render('finish', {user: req.query.state});
 		});
@@ -58,7 +58,7 @@ async function updatePhotos(id, contacts, accessToken) {
 			failedContacts: []
 		};
 	
-		for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
+		for (let index = 0; index < 10; index++) {
 			userContacts[id].index = index;
 			let contact = userContacts[id].parsedContacts[index];
 			contact.photo = (await getPhoto(id, contact.phone)).image;
