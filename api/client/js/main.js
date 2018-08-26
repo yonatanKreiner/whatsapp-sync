@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	new WOW().init();
 	var user = uuidv4();
 
 	$("#button-contacts").click(function() {
@@ -7,7 +8,7 @@ $(document).ready(function() {
 	});
 
 	$.getJSON('/connect?id=' + user, data => {
-		$("#bootstrap-container img").attr("src", data.image);
+		$("#qrcode").attr("src", data.image);
 		$("#button-contacts").attr("disabled", false);
 	});
 
@@ -15,10 +16,10 @@ $(document).ready(function() {
 		$.getJSON('/refresh?id=' + user, data => {
 			if (data.image == "scanned") {
 				clearInterval(refreshIntervalId);
-				$("#bootstrap-container img").remove();
-				$("#bootstrap-container").prepend("<h2>Click import</h2>");
+				$("#qrcode").remove();
+				$("#qr").prepend("<h2>Click import</h2>");
 			} else {
-				$("#bootstrap-container img").attr("src", data.image);
+				$("#qrcode").attr("src", data.image);
 			}
 		})
 	}, 18000);
