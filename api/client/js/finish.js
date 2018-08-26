@@ -13,3 +13,6 @@ function checkProgress(user) {
         });
     }, 3000);
 }
+
+var user = "<%= user %>";
+checkProgress(user);
