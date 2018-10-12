@@ -7,7 +7,7 @@
     "start:backend": "PORT=2020 nodemon --exec python ../backend/whatsapp_web_backend.py -i client -e py",
     "start:server": "PORT=2018 nodemon index.js -i client -e js",
     "start:dev": "concurrently --kill-others \"npm run start:server\" \"npm run start:backend\"",
-    "start": "BACKEND=168.62.172.84:8080 REDIRECT=https://whatsappsync.com/authorized node index.js"
+    "start": "BACKEND=whatsappsync-backend.eastus.azurecontainer.io:8080 REDIRECT=https://whatsappsync.com/authorized node index.js"
   },
   "engines": {
     "node": ">8.0.0"
