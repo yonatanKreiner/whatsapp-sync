@@ -8,18 +8,22 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 
         <!-- scripts -->
-        <script defer src="js/finish.js"></script>
+        <script src="js/finish.js"></script>
         <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124216952-1"></script> -->
         <!-- <script defer src="js/analytics.js"></script> -->
     </head>
     <body>
+        <script>
+            var user = "<%= user %>";
+            checkProgress(user);
+        </script>
         <div class="navbar">
             <div id="logo">WhatsAppSync</div>
         </div>
 
         <div id='content'>
             <section id='instructions' class="section">
-				<h1 id='progress'></h1>
+				Progress- <h1 id='progress'></h1>
             </section>
 		   
 			<section id="section3" class="section">

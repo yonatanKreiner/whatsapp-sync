@@ -1,11 +1,10 @@
 function checkProgress(user) {
     var progressIntervalId = setInterval(() => {
         $.getJSON('/progress?id=' + user, data => {
-            console.log(data)
-            if (data === 'No such user') {
+            if (data.hasOwnProperty('error') && data.error === 'No such user') {
                 clearInterval(progressIntervalId);
                 $.getJSON('/disconnect?id=' + user, data => {
-                    alert(data);
+                    console.log(data);
                 });
             } else {
                 $('#progress').text(`${data.percentage}%`);
@@ -13,6 +12,3 @@ function checkProgress(user) {
         });
     }, 3000);
 }
-
-var user = "<%= user %>";
-checkProgress(user);

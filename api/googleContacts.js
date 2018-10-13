@@ -64,7 +64,7 @@ function getContacts(accessToken, callback) {
 	});
 }
 
-async function parseContacts(contacts) {
+function parseContacts(contacts) {
 	let parsedContacts = contacts.map(contact => {
 		let parsedContact = {name: contact.name, photoUrl: contact.photo};
 

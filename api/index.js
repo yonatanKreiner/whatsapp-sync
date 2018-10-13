@@ -30,7 +30,7 @@ server.get('/progress', (req, res) => {
 		const percentage = parseInt(userContacts[id].index / userContacts[id].parsedContacts.length * 100)
 		res.json({percentage});
 	} else {
-		res.status(200).send('No such user');
+		res.status(200).send({error: 'No such user'});
 	}
 });
 
@@ -54,11 +54,11 @@ server.get('/authorized', async (req, res) => {
 async function updatePhotos(id, contacts, accessToken) {
 	try	{
 		userContacts[id] = {
-			parsedContacts: await googleContacts.parseContacts(contacts),
+			parsedContacts: googleContacts.parseContacts(contacts),
 			failedContacts: []
 		};
 	
-		for (let index = 0; index < 10; index++) {
+		for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
 			userContacts[id].index = index;
 			let contact = userContacts[id].parsedContacts[index];
 			contact.photo = (await getPhoto(id, contact.phone)).image;
@@ -69,10 +69,10 @@ async function updatePhotos(id, contacts, accessToken) {
 				userContacts[id].failedContacts.push(contact);
 			}
 		}
-	
-		delete userContacts[id];
 	} catch (err) {
 		console.log('error updating photos: ' + err.message);
+	} finally {
+		delete userContacts[id];
 	}
 }
 
