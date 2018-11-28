@@ -23,8 +23,4 @@ $(document).ready(function() {
 			}
 		})
 	}, 18000);
-
-	$("#button-disconnect").click(function() {
-		console.log('disconnect');		
-	});
 });
