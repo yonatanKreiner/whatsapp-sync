@@ -11,6 +11,10 @@ const port = process.env.PORT || 8080;
 
 const server = express();
 
+process.on('unhandledRejection', (err) => {
+	console.error(err);
+})
+
 server.set('view engine', 'ejs');
 server.set('views', __dirname + '/client/views');
 
@@ -27,8 +31,13 @@ server.use(express.static(__dirname + "/client"));
 server.get('/progress', (req, res) => {
 	const id = req.query.id;
 	if (userContacts.hasOwnProperty(id)) {
-		const percentage = parseInt(userContacts[id].index / userContacts[id].parsedContacts.length * 100)
-		res.json({percentage});
+		if(userContacts[id] === 'finished') {
+			disconnect(id);
+			res.status(200).send({message: 'finished'});
+		} else {
+			const percentage = parseInt(userContacts[id].index / userContacts[id].parsedContacts.length * 100)
+			res.json({percentage});
+		}
 	} else {
 		res.status(200).send({error: 'No such user'});
 	}
@@ -72,7 +81,7 @@ async function updatePhotos(id, contacts, accessToken) {
 	} catch (err) {
 		console.log('error updating photos: ' + err.message);
 	} finally {
-		delete userContacts[id];
+		userContacts[id] = 'finished';
 	}
 }
 
