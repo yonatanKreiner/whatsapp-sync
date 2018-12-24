@@ -25,6 +25,7 @@
     "google-contacts-api-wrapper": "^1.0.4",
     "googleapis": "^32.0.0",
     "libphonenumber-js": "^1.2.15",
+    "mongodb": "^3.1.10",
     "querystring": "^0.2.0",
     "string_decoder": "^1.0.3",
     "ws": "^3.3.2"

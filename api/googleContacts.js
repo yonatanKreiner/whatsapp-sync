@@ -4,6 +4,8 @@ const libphonenumber = require('libphonenumber-js');
 const { google } = require('googleapis');
 const GoogleContacts = require('google-contacts-api-wrapper');
 
+const log = require('./log');
+
 const credentials = {
     client_id: "993164538042-t8khg7khktt8u391988iubuk7e72psh3.apps.googleusercontent.com",
     project_id: "whatsapp-photo-sync",
@@ -47,8 +49,7 @@ async function getAccessToken(code) {
 
         return response.data.access_token;
     } catch (err) {
-        console.log('failed getting token');
-        console.error(err.stack);
+        log('failed getting token', err);
         return null;
     }
 }
@@ -57,10 +58,10 @@ function getContacts(accessToken, callback) {
     const contactsApi = new GoogleContacts({ token: accessToken });
 	contactsApi.getContacts({projection: 'full'}, (err, contacts) => {
 		if (err) {
-			console.error(err.message);
+            callback(err);
         }
         
-        callback(contacts);
+        callback(null, contacts);
 	});
 }
 
@@ -76,7 +77,7 @@ function parseContacts(contacts) {
 				parsedContact.phone = parsedPhone.substr(1, parsedPhone.length - 1);
 			}
 		} catch (err) {
-            console.error(contact.phones[0].field);
+            log(`error parse phone ${contact.phones[0].field}`);
 		}
 			
 		return parsedContact
@@ -97,8 +98,7 @@ async function updatePhoto(contact, token) {
         const picture = new Buffer.from(response.data, 'binary');
         await axios.put(contact.photoUrl, picture, {headers: headers});
     } catch (err) {
-        console.error(err)
-        console.error('failed update ' + contact.name);
+        log(`failed update ${contact.name}`, err);
     }
 }
 
