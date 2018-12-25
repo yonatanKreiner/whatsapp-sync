@@ -3,6 +3,7 @@ const {StringDecoder} = require("string_decoder");
 
 const {WebSocketClient} = require("./client/js/WebSocketClient.js");
 const {BootstrapStep}   = require("./client/js/BootstrapStep.js");
+const log = require('./log');
 
 const backendInfo = {
 	url: `ws://${process.env.BACKEND || 'localhost:2020'}`,
@@ -19,7 +20,7 @@ async function connect(id) {
 			return;
 		}
 
-		let backendResponse = await (new BootstrapStep({
+		await (new BootstrapStep({
 			websocket: backendWebsocket,
 			actor: websocket => {
 				websocket.initialize(backendInfo.url, "api2backend", {func: WebSocket, args: [{ perMessageDeflate: false }], getOnMessageData: msg => new StringDecoder("utf-8").write(msg.data)});
@@ -31,45 +32,51 @@ async function connect(id) {
 				type: "waitForMessage",
 				condition: obj => obj.from == "backend"  &&  obj.type == "connected"
 			}
-		}).run(backendInfo.timeout));
+        }).run(backendInfo.timeout));
 
 		if(!backendWebsocket.isOpen) {
 			return;
-		}
-		backendResponse = await (new BootstrapStep({
+        }
+        
+		const connectResponse = await (new BootstrapStep({
 			websocket: backendWebsocket,
 			request: {
 				type: "call",
 				callArgs: { command: "backend-connectWhatsApp" },
 				successCondition: obj => obj.type == "resource_connected"  &&  obj.resource == "whatsapp"  &&  obj.resource_instance_id
 			}
-		}).run(backendInfo.timeout));
+        }).run(backendInfo.timeout));
+        
+        log(`whatsapp conected with id ${connectResponse.data.resource_instance_id}`);
 		
-		backendWebsocket.activeWhatsAppInstanceId = backendResponse.data.resource_instance_id;
-		backendWebsocket.waitForMessage({
+		backendWebsocket.activeWhatsAppInstanceId = connectResponse.data.resource_instance_id;
+        
+        backendWebsocket.waitForMessage({
 			condition: obj => obj.type == "resource_gone"  &&  obj.resource == "whatsapp",
 			keepWhenHit: false
-		}).then(() => {
-			delete backendWebsocket.activeWhatsAppInstanceId;
-			throw { type: "resource_gone", resource: "whatsapp" };
+		}).then((disconnectResponse) => {
+            log(`whatsapp disconected with id ${disconnectResponse.data.resource_instance_id}`);
+            delete backendWebsocket.activeWhatsAppInstanceId;
 		});
 		
 		if(!backendWebsocket.isOpen) {
-			throw { type: "error", reason: "No backend connected." };
+			throw new Error('Can\'t generate QR, no backend connected');
 		}
 
-		backendResponse = await (new BootstrapStep({
+		const qrcodeResponse = await (new BootstrapStep({
 			websocket: backendWebsocket,
 			request: {
 				type: "call",
 				callArgs: { command: "backend-generateQRCode", whatsapp_instance_id: backendWebsocket.activeWhatsAppInstanceId },
 				successCondition: obj => obj.from == "backend"  &&  obj.type == "generated_qr_code"  &&  obj.image  &&  obj.content
 			}
-		}).run(backendInfo.timeout));
+        }).run(backendInfo.timeout));
+        
+        log('generated qrcode');
 
-		return { type: 'generated_qr_code', image: backendResponse.data.image };
-	} catch (error) {
-		return { type: "error", reason: error };
+		return { image: qrcodeResponse.data.image };
+	} catch (err) {
+        log('could not connect', err);
 	}
 }
 
@@ -78,7 +85,7 @@ async function refreshQR(id) {
 		let backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
-			throw { type: "error", reason: "No backend connected." };
+			throw new Error('Can\'t refresh QR, no backend connected');
 		}
 
 		let backendResponse = await (new BootstrapStep({
@@ -90,9 +97,9 @@ async function refreshQR(id) {
 			}
 		}).run(backendInfo.timeout));
 
-		return { type: 'generated_qr_code', image: backendResponse.data.image };
-	} catch (error) {
-		return { type: "error", reason: error }
+		return { image: backendResponse.data.image };
+	} catch (err) {
+        log('could refresh QR code', err);
 	}
 }
 
@@ -101,7 +108,7 @@ async function getPhoto(id, phone) {
 		let backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
-			throw { type: "error", reason: "No backend connected." };
+			throw new Error('Can\'t get photo, no backend connected');
 		}
 
 		let backendResponse = await (new BootstrapStep({
@@ -121,24 +128,24 @@ async function getPhoto(id, phone) {
 
 async function disconnect(id) {
 	try {
-		let backendWebsocket = backendWebsockets[id];
+		const backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
-			throw { type: "error", reason: "No backend connected." };
+			throw new Error('Can\'t disconnect, no backend connected');
 		}
 	
-		let backendResponse = await (new BootstrapStep({
+		const disconnectResponse = await (new BootstrapStep({
 			websocket: backendWebsocket,
 			request: {
 				type: "call",
 				callArgs: { command: "backend-disconnectWhatsApp", whatsapp_instance_id: backendWebsocket.activeWhatsAppInstanceId },
 				successCondition: obj => obj.type == "resource_disconnected"  &&  obj.resource == "whatsapp"  &&  obj.resource_instance_id == backendWebsocket.activeWhatsAppInstanceId
 			}
-		}).run(backendInfo.timeout));
-	
-		return { type: "resource_disconnected", resource: "whatsapp" };
-	} catch (error) {
-		return { type: "error", reason: error };
+        }).run(backendInfo.timeout));
+
+        log(`whatsapp disconected with id ${disconnectResponse.data.resource_instance_id}`);
+	} catch (err) {
+		log('could not disconnect from whatsapp', err);
 	}
 }
 

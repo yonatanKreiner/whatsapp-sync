@@ -1,3 +1,4 @@
+const util = require('util');
 const MongoClient = require('mongodb').MongoClient;
 const url = 'mongodb://whatsappsync:012C6KdE4Gt7@ds042138.mlab.com:42138/whatsappsync';
 
@@ -10,9 +11,17 @@ const insert = async (collection, documents) => {
     }
 }
 
-const log = async (message, error = undefined) => {
-    const entry = error ? Object.assign({}, {message}, {error}) : {message};
-    await insert('logs', entry);    
+const log = async (message, err = undefined) => {
+    const entry = {
+        message,
+        timestamp: new Date()
+    };
+
+    if (err) {
+        await insert('logs', Object.assign({}, entry, {error: util.inspect(err)}));
+    } else {
+        await insert('logs', entry);
+    }
 }
 
 module.exports = log;

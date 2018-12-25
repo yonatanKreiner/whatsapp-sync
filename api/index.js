@@ -49,7 +49,7 @@ server.get('/progress', async (req, res, next) => {
 
 		if (userContacts.hasOwnProperty(id)) {
 			if(userContacts[id] === 'finished') {
-				whatsapp.disconnect(id);
+				await whatsapp.disconnect(id);
 				res.status(200).send({message: 'finished'});
 			} else {
 				const percentage = parseInt(userContacts[id].index / userContacts[id].parsedContacts.length * 100)
@@ -103,15 +103,19 @@ server.get('/sync', async (req, res, next) => {
 			});
 		}
 	} catch (err) {
-		console.error(err);
-		
 		next(err);
 	}
 });
 
 server.get('/connect', async (req, res, next) => {
 	try {
-		res.send(await whatsapp.connect(req.query.id));
+		const qrcode = await whatsapp.connect(req.query.id);
+
+		if (qrcode) {
+			res.send(qrcode);
+		} else {
+			res.status(500).send('Error while refreshing QR code');
+		}
 	} catch (err) {
 		next(err);
 	}
@@ -119,15 +123,13 @@ server.get('/connect', async (req, res, next) => {
 
 server.get('/refresh', async (req, res, next) => {
 	try {
-		res.send(await whatsapp.refreshQR(req.query.id));
-	} catch (err) {
-		next(err);
-	}
-});
+		const qrcode = await whatsapp.refreshQR(req.query.id);
 
-server.get('/disconnect', async (req, res, next) => {
-	try {
-		res.send(await disconnect(req.query.id));
+		if (qrcode) {
+			res.send(qrcode);
+		} else {
+			res.status(500).send('Error while refreshing QR code');
+		}
 	} catch (err) {
 		next(err);
 	}

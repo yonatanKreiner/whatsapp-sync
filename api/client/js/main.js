@@ -7,13 +7,17 @@ $(document).ready(function() {
 		window.location.href = '/contacts?id=' + user; 
 	});
 
-	$.getJSON('/connect?id=' + user, data => {
+	$.getJSON('/connect?id=' + user)
+	.done(data => {
 		$("#qrcode").attr("src", data.image);
 		$("#button-contacts").attr("disabled", false);
+	}).fail(err => {
+		console.error(err.responseText);
 	});
 
 	var refreshIntervalId = setInterval(() => {
-		$.getJSON('/refresh?id=' + user, data => {
+		$.getJSON('/refresh?id=' + user)
+		.done(data => {
 			if (data.image == "scanned") {
 				clearInterval(refreshIntervalId);
 				$("#qrcode").remove();
@@ -21,6 +25,8 @@ $(document).ready(function() {
 			} else {
 				$("#qrcode").attr("src", data.image);
 			}
+		}).fail(err => {
+			console.error(err.responseText);
 		})
 	}, 18000);
 });
