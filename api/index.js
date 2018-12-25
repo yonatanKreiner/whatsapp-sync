@@ -28,12 +28,16 @@ async function updatePhotos(id, contacts, accessToken) {
 		for (let index = 0; index < userContacts[id].parsedContacts.length; index++) {
 			userContacts[id].index = index;
 			let contact = userContacts[id].parsedContacts[index];
-			contact.photo = (await whatsapp.getPhoto(id, contact.phone)).image;
-	
-			if (contact.photo !== 404 && contact.photo !== 401) {
-				await googleContacts.updatePhoto(contact, accessToken);
-			} else {
-				userContacts[id].failedContacts.push(contact);
+			const photo = await whatsapp.getPhoto(id, contact.phone);
+
+			if (photo) {
+				contact.photo = photo;
+
+				if (contact.photo !== 404 && contact.photo !== 401) {
+					await googleContacts.updatePhoto(contact, accessToken);
+				} else {
+					userContacts[id].failedContacts.push(contact);
+				}
 			}
 		}
 	} catch (err) {
@@ -56,7 +60,7 @@ server.get('/progress', async (req, res, next) => {
 				res.json({percentage});
 			}
 		} else {
-			res.status(200).send({error: 'No such user'});
+			res.status(400).send('no such user');
 		}
 	} catch (err) {
 		next(err);
@@ -75,10 +79,10 @@ server.get('/authorized', async (req, res, next) => {
 	try {
 		const accessToken = await googleContacts.getAccessToken(req.query.code);
 	
-		if (accessToken === null) {
-			res.json('fail');
-		} else {
+		if (accessToken) {
 			res.redirect(`/sync?user=${req.query.state}&token=${accessToken}`);
+		} else {
+			res.json('fail');
 		}
 	} catch (err) {
 		next(err);
@@ -128,7 +132,7 @@ server.get('/refresh', async (req, res, next) => {
 		if (qrcode) {
 			res.send(qrcode);
 		} else {
-			res.status(500).send('Error while refreshing QR code');
+			res.status(500).send('error while refreshing QR code');
 		}
 	} catch (err) {
 		next(err);

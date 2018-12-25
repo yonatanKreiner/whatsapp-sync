@@ -50,7 +50,6 @@ async function getAccessToken(code) {
         return response.data.access_token;
     } catch (err) {
         log('failed getting token', err);
-        return null;
     }
 }
 

@@ -108,7 +108,7 @@ async function getPhoto(id, phone) {
 		let backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
-			throw new Error('Can\'t get photo, no backend connected');
+			throw new Error('can\'t get photo, no backend connected');
 		}
 
 		let backendResponse = await (new BootstrapStep({
@@ -120,9 +120,9 @@ async function getPhoto(id, phone) {
 			}
 		}).run(backendInfo.timeout));
 
-		return { type: "profile_photo", image: backendResponse.data.image}
-	} catch (error) {
-		return { type: "error", reason: error }
+		return backendResponse.data.image;
+	} catch (err) {
+        log('could not get photo', err);
 	}
 }
 
@@ -131,7 +131,7 @@ async function disconnect(id) {
 		const backendWebsocket = backendWebsockets[id];
 
 		if(!backendWebsocket.isOpen) {
-			throw new Error('Can\'t disconnect, no backend connected');
+			throw new Error('can\'t disconnect, no backend connected');
 		}
 	
 		const disconnectResponse = await (new BootstrapStep({
