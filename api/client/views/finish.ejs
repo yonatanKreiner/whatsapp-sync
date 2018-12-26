@@ -8,14 +8,14 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 
         <!-- scripts -->
-        <script src="js/finish.js"></script>
+        <script defer src="lib/jquery/js/jquery-3.2.1.min.js"></script>
+        <script defer src="js/finish.js"></script>
         <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124216952-1"></script> -->
         <!-- <script defer src="js/analytics.js"></script> -->
     </head>
     <body>
         <script>
             var user = "<%= user %>";
-            checkProgress(user);
         </script>
         <div class="navbar">
             <div id="logo">WhatsAppSync</div>
@@ -36,8 +36,5 @@
                 2018 © WhatsAppSync
             </div>
         </footer>
-        
-        <!-- scripts -->
-        <script defer src="lib/jquery/js/jquery-3.2.1.min.js"></script>
 	</body>
 </html>

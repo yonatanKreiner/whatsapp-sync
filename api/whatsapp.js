@@ -25,7 +25,7 @@ async function connect(id) {
 			actor: websocket => {
 				websocket.initialize(backendInfo.url, "api2backend", {func: WebSocket, args: [{ perMessageDeflate: false }], getOnMessageData: msg => new StringDecoder("utf-8").write(msg.data)});
 				websocket.onClose(() => {
-					throw { type: "resource_gone", resource: "backend" };
+					throw new Error('backend disconnected');
 				});
 			},
 			request: {
@@ -71,8 +71,6 @@ async function connect(id) {
 				successCondition: obj => obj.from == "backend"  &&  obj.type == "generated_qr_code"  &&  obj.image  &&  obj.content
 			}
         }).run(backendInfo.timeout));
-        
-        log('generated qrcode');
 
 		return { image: qrcodeResponse.data.image };
 	} catch (err) {
@@ -99,7 +97,7 @@ async function refreshQR(id) {
 
 		return { image: backendResponse.data.image };
 	} catch (err) {
-        log('could refresh QR code', err);
+        log('could not refresh QR code', err);
 	}
 }
 
