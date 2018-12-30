@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>WhatsAppSync</title>
-
         <!-- Stylesheets -->
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
         <link rel="stylesheet" href="css/animate.css">
         <link rel="stylesheet" href="css/hover-min.css">
 
-        <!-- Scripts -->
-        <script async src="lib/wow/js/wow.min.js"></script>
-        <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124216952-1"></script> -->
-        <!-- <script defer src="js/analytics.js"></script> -->
+        <!-- SEO -->
+        <title>WhatsAppSync</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Whatsapp photos to your google contacts">
+        <meta name="author" content="Yonatan Kreiner">
+        <meta name="robots" content="index,follow" />
     </head>
     <body>
         <div class="navbar">
-            <div id="logo">WhatsAppSync</div>
+            <div id="logo">
+                <!-- rgb(227, 250, 220); transform: scale(0.643617); -->
+                <img id="logo-image" src="./assets/logo.svg" >
+            </div>
         </div>
 
         <div id='content'>
@@ -69,7 +73,11 @@
         </footer>
         
         <!-- Scripts -->
+        <script defer src="lib/wow/js/wow.min.js"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-124216952-1"></script>
+        <script defer src="js/analytics.js"></script>
         <script defer src="lib/jquery/js/jquery-3.2.1.min.js"></script>
+        <script defer src="https://apis.google.com/js/platform.js"></script>
         <script defer src="lib/uuid/js/uuid.min.js"></script>
         <script defer src="js/UpdaterPromise.js"></script>
         <script defer src="js/WebSocketClient.js"></script>

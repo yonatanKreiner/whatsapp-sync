@@ -5,6 +5,7 @@ $(document).ready(function() {
 	$("#button-contacts").click(function() {
 		clearInterval(refreshIntervalId);
 		window.location.href = '/contacts?id=' + user; 
+		event('import_contacts');
 	});
 
 	$.getJSON('/connect?id=' + user)
@@ -12,7 +13,7 @@ $(document).ready(function() {
 		$("#qrcode").attr("src", data.image);
 		$("#button-contacts").attr("disabled", false);
 	}).fail(err => {
-		console.error(err.responseText);
+		connectionFailedEvent(err.status, err.responseText);
 	});
 
 	var refreshIntervalId = setInterval(() => {
@@ -26,7 +27,7 @@ $(document).ready(function() {
 				$("#qrcode").attr("src", data.image);
 			}
 		}).fail(err => {
-			console.error(err.responseText);
+			connectionFailedEvent(err.status, err.responseText);
 		})
 	}, 18000);
 });

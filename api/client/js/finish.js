@@ -9,7 +9,7 @@ function checkProgress(user, progressIntervalId) {
         }
     }).fail(err => {
         clearInterval(progressIntervalId);
-        console.error(err.responseText);
+        connectionFailedEvent(err.status, err.responseText);
     });
 }
 

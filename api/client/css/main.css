@@ -12,9 +12,13 @@
 
 #logo {
     padding-left: var(--left-padding);
-    padding-top: 38px;
+    padding-top: 15px;
     color: var(--sub-bg-color);
     font-size: x-large;
+}
+
+#logo-image {
+    width: 15%;
 }
 
 .navbar {
