@@ -5,13 +5,14 @@ $(document).ready(function() {
 	$("#button-contacts").click(function() {
 		clearInterval(refreshIntervalId);
 		window.location.href = '/contacts?id=' + user; 
-		event('import_contacts');
+		event('import_contacts', { user });
 	});
 
 	$.getJSON('/connect?id=' + user)
 	.done(data => {
 		$("#qrcode").attr("src", data.image);
 		$("#button-contacts").attr("disabled", false);
+		event('connect_whatsapp', { user });
 	}).fail(err => {
 		connectionFailedEvent(err.status, err.responseText);
 	});
@@ -25,6 +26,7 @@ $(document).ready(function() {
 				$("#qr").prepend("<h2>Click import</h2>");
 			} else {
 				$("#qrcode").attr("src", data.image);
+				event('refreshed_qrcode', { user });
 			}
 		}).fail(err => {
 			connectionFailedEvent(err.status, err.responseText);

@@ -26,6 +26,7 @@
     "googleapis": "^32.0.0",
     "libphonenumber-js": "^1.2.15",
     "mongodb": "^3.1.10",
+    "phoneparser": "^2.1.0",
     "querystring": "^0.2.0",
     "string_decoder": "^1.0.3",
     "utils": "^0.3.1",

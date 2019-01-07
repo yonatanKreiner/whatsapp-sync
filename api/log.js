@@ -11,8 +11,13 @@ const insert = async (collection, documents) => {
     }
 }
 
-const log = async (message, err = undefined) => {
+/* 1 - error
+   2 - fatal
+   3 - info */
+
+const log = async (sevirity, message, err = undefined) => {
     const entry = {
+        sevirity,
         message,
         timestamp: new Date()
     };

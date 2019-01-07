@@ -1,6 +1,7 @@
 const querystring = require('querystring');
 const axios = require('axios');
 const libphonenumber = require('libphonenumber-js');
+const phoneparser = require('phoneparser');
 const { google } = require('googleapis');
 const GoogleContacts = require('google-contacts-api-wrapper');
 
@@ -49,7 +50,7 @@ async function getAccessToken(code) {
 
         return response.data.access_token;
     } catch (err) {
-        log('failed getting token', err);
+        log(1, 'failed getting token', err);
     }
 }
 
@@ -64,19 +65,29 @@ function getContacts(accessToken, callback) {
 	});
 }
 
-function parseContacts(contacts) {
+function getCountryCode(whatsappPhone) {
+    try {
+        const phone = phoneparser.parse(whatsappPhone);
+        return phone.country.iso3166.alpha2;
+    } catch (err) {
+        log(2, `could not parse phone number ${whatsappPhone}`, err);
+        return 'IL';
+    }
+}
+
+function parseContacts(contacts, countryCode) {
 	let parsedContacts = contacts.map(contact => {
 		let parsedContact = {name: contact.name, photoUrl: contact.photo};
 
 		try {
 			if (contact.phones && contact.phones.length > 0) {
 				const phone = contact.phones[0].field;
-				const number = libphonenumber.parseNumber(phone, 'IL');
+				const number = libphonenumber.parseNumber(phone, countryCode);
 				const parsedPhone = libphonenumber.formatNumber(number, 'E.164');
 				parsedContact.phone = parsedPhone.substr(1, parsedPhone.length - 1);
 			}
 		} catch (err) {
-            log(`error parse phone ${contact.phones[0].field}`);
+            log(1, `error parse phone ${contact.phones[0].field}`);
 		}
 			
 		return parsedContact
@@ -97,8 +108,8 @@ async function updatePhoto(contact, token) {
         const picture = new Buffer.from(response.data, 'binary');
         await axios.put(contact.photoUrl, picture, {headers: headers});
     } catch (err) {
-        log(`failed update ${contact.name}`, err);
+        log(1, `failed update ${contact.name}`, err);
     }
 }
 
-module.exports = { getUrl, getAccessToken, getContacts, parseContacts, updatePhoto };
+module.exports = { getUrl, getAccessToken, getContacts, getCountryCode, parseContacts, updatePhoto };

@@ -13,15 +13,19 @@ server.set('views', __dirname + '/client/views');
 server.use(express.static(__dirname + "/client"));
 
 process.on('unhandledRejection', (err) => {
-	log('unhandledRejection', err);
+	log(2, 'unhandledRejection', err);
+})
+
+process.on('uncaughtException', (err) => {
+	log(2, 'uncaughtException', err);
 })
 
 let userContacts = {};
 
-async function updatePhotos(id, contacts, accessToken) {
+async function updatePhotos(id, contacts, accessToken, countryCode) {
 	try	{
 		userContacts[id] = {
-			parsedContacts: googleContacts.parseContacts(contacts),
+			parsedContacts: googleContacts.parseContacts(contacts, countryCode),
 			failedContacts: []
 		};
 	
@@ -41,7 +45,7 @@ async function updatePhotos(id, contacts, accessToken) {
 			}
 		}
 	} catch (err) {
-		log('error updating photos', err);
+		log(1, 'error updating photos', err);
 	} finally {
 		userContacts[id] = 'finished';
 	}
@@ -97,11 +101,14 @@ server.get('/sync', async (req, res, next) => {
 		if (userContacts.hasOwnProperty(user) && userContacts[user] !== 'finished') {
 			res.render('finish', {user});
 		} else {
+			const whatsappPhone = await whatsapp.getWhatsappNumber(user);
+			const countryCode = googleContacts.getCountryCode(whatsappPhone.split('@')[0]);
+
 			googleContacts.getContacts(token, (err, contacts) => {
 				if (err) {
 					res.status(500).send('could not get contacts');
 				} else {
-					updatePhotos(user, contacts, token);
+					updatePhotos(user, contacts, token, countryCode);
 					res.render('finish', {user});
 				}
 			});
@@ -140,7 +147,7 @@ server.get('/refresh', async (req, res, next) => {
 });
 
 server.use((err, req, res, next) => {
-	log('an error has occured', err);
+	log(2, 'an error has occured', err);
 	res.status(500).send('internal server error');
 })
 

@@ -193,7 +193,6 @@ class WhatsAppWebClient:
 							keysDecrypted = AESDecrypt(sse[:32], keysEncrypted);
 							self.loginInfo["key"]["encKey"] = keysDecrypted[:32];
 							self.loginInfo["key"]["macKey"] = keysDecrypted[32:64];
-
 							eprint("logged in as " + jsonObj[1]["pushname"]  + " (" + jsonObj[1]["wid"] + ")");
 						elif jsonObj[0] == "Stream":
 							pass;
@@ -237,7 +236,7 @@ class WhatsAppWebClient:
 		callback["func"]({ "type": "login_info", "data": self.loginInfo }, callback);
 	
 	def getConnectionInfo(self, callback):
-		callback["func"]({ "type": "connection_info", "data": self.connInfo }, callback);
+		callback["func"]({ "type": "connection_info", "wid": self.connInfo["me"] }, callback);
 
 	def disconnect(self):
 		self.activeWs.send('goodbye,,["admin","Conn","disconnect"]');		# WhatsApp server closes connection automatically when client wants to disconnect

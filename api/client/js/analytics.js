@@ -10,7 +10,6 @@ function event(name, params) {
     } catch (err) {
         console.error(err.message);
     }
-    gtag('event', )
 }
 
 function connectionFailedEvent(statusCode, errorMessage) {
