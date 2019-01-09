@@ -12,6 +12,7 @@ pycrypto = "*"
 protobuf = "*"
 PyQRCode = "*"
 simplewebsocketserver = {git = "https://github.com/dpallot/simple-websocket-server.git"}
+pymongo = "*"
 
 [requires]
 python_version = "2.7"

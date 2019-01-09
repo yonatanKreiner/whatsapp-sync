@@ -25,6 +25,7 @@ import curve25519;
 import pyqrcode;
 from utilities import *;
 from whatsapp_binary_reader import whatsappReadBinary;
+from db import log;
 
 reload(sys);
 sys.setdefaultencoding("utf-8");
@@ -104,18 +105,18 @@ class WhatsAppWebClient:
 			self.websocketIsOpened = True;
 			if self.onOpenCallback is not None and "func" in self.onOpenCallback:
 				self.onOpenCallback["func"](self.onOpenCallback);
-			eprint("WhatsApp backend Websocket opened.");
+			log(3, "whatsApp backend Websocket opened");
 		except:
-			eprint(traceback.format_exc());
+			log(2, "error while opening the connection to whatsapp", traceback.format_exc());
 
 	def onError(self, ws, error):
-		eprint(error);
+		log(1, "an error in the connection", error);
 
 	def onClose(self, ws):
 		self.websocketIsOpened = False;
 		if self.onCloseCallback is not None and "func" in self.onCloseCallback:
 			self.onCloseCallback["func"](self.onCloseCallback);
-		eprint("WhatsApp backend Websocket closed.");
+		log(3, "whatsApp backend Websocket closed");
 
 	def onMessage(self, ws, message):
 		try:
@@ -160,8 +161,7 @@ class WhatsAppWebClient:
 					if messageContent != "":
 						hmacValidation = HmacSha256(self.loginInfo["key"]["macKey"], messageContent[32:]);
 						if hmacValidation != messageContent[:32]:
-							eprint(hmacValidation)
-							eprint(messageContent[:32])
+							log(1, "Hmac mismatch " + hmacValidation + " != " + messageContent[:32]);
 							raise ValueError("Hmac mismatch");
 						
 						decryptedMessage = AESDecrypt(self.loginInfo["key"]["encKey"], messageContent[32:]);
@@ -193,13 +193,13 @@ class WhatsAppWebClient:
 							keysDecrypted = AESDecrypt(sse[:32], keysEncrypted);
 							self.loginInfo["key"]["encKey"] = keysDecrypted[:32];
 							self.loginInfo["key"]["macKey"] = keysDecrypted[32:64];
-							eprint("logged in as " + jsonObj[1]["pushname"]  + " (" + jsonObj[1]["wid"] + ")");
+							log(3, "logged in " + jsonObj[1]["pushname"]  + " (" + jsonObj[1]["wid"] + ")");
 						elif jsonObj[0] == "Stream":
 							pass;
 						elif jsonObj[0] == "Props":
 							pass;
 		except:
-			eprint(traceback.format_exc());
+			log(2, "error while processing message", traceback.format_exc());
 
 	def connect(self):
 		self.activeWs = websocket.WebSocketApp("wss://w1.web.whatsapp.com/ws",

@@ -15,6 +15,7 @@ import traceback;
 from SimpleWebSocketServer import SimpleWebSocketServer, WebSocket;
 from whatsapp import WhatsAppWebClient;
 from utilities import *;
+from db import log;
 
 reload(sys);
 sys.setdefaultencoding("utf-8");
@@ -40,7 +41,7 @@ class WhatsAppWeb(WebSocket):
 		pass;
 
 	def sendError(self, reason, tag=None):
-		eprint("sending error: " + reason);
+		log(2, "an error has occured", reason);
 		self.sendJSON({ "type": "error", "reason": reason }, tag);
 
 	def handleMessage(self):
@@ -99,15 +100,15 @@ class WhatsAppWeb(WebSocket):
 						currWhatsAppInstance.disconnect();
 						self.sendJSON({ "type": "resource_disconnected", "resource": "whatsapp", "resource_instance_id": obj["whatsapp_instance_id"] }, tag);
 		except:
-			eprint(traceback.format_exc());
+			log(2, 'an error while processing message', traceback.format_exc());
 
 	def handleConnected(self):
 		self.sendJSON({ "from": "backend", "type": "connected" });
-		eprint(self.address, "connected to backend");
+		log(3, self.address + " connected to backend");
 
 	def handleClose(self):
 		whatsapp.disconnect();
-		eprint(self.address, "closed connection to backend");
+		log(3, self.address + " closed connection to backend");
 
 port = os.environ.get('PORT') or 2020;
 server = SimpleWebSocketServer("", int(port), WhatsAppWeb);

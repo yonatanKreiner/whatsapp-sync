@@ -17,6 +17,7 @@ const insert = async (collection, documents) => {
 
 const log = async (sevirity, message, err = undefined) => {
     const entry = {
+        service: 'api',
         sevirity,
         message,
         timestamp: new Date()
