@@ -23,7 +23,7 @@
     "ejs": "^2.6.1",
     "express": "^4.16.2",
     "google-contacts-api-wrapper": "^1.0.4",
-    "googleapis": "^32.0.0",
+    "googleapis": "^39.1.0",
     "libphonenumber-js": "^1.2.15",
     "mongodb": "^3.1.10",
     "phoneparser": "^2.1.0",
