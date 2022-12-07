@@ -21,7 +21,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "ejs": "^2.6.1",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "google-contacts-api-wrapper": "^1.0.4",
     "googleapis": "^32.0.0",
     "libphonenumber-js": "^1.2.15",
