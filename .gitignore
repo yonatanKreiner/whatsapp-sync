@@ -68,3 +68,6 @@ log.txt
 .envrc
 
 .vscode
+
+lib/
+baileys_auth_info/
