@@ -47,14 +47,34 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
         console.log('connection update', update)        
         clientSocket.send(JSON.stringify({connection, qr: update.qr, lastDisconnect}));
     });
-    sock.ev.on("messages.upsert", async (m) => {
-        console.log(JSON.stringify(m, undefined, 2));
+    // sock.ev.on("messages.upsert", async (m) => {
+    //     console.log(JSON.stringify(m, undefined, 2));
 
-        console.log("replying to", m.messages[0].key.remoteJid);
-        // await sock.sendMessage(m.messages[0].key.remoteJid!, {
-        //     text: "Hello there!",
-        // });
-    });
+    //     console.log("replying to", m.messages[0].key.remoteJid);
+    //     // await sock.sendMessage(m.messages[0].key.remoteJid!, {
+    //     //     text: "Hello there!",
+    //     // });
+    // });
+
+    sock.ev.on("contacts.upsert", async (contacts) => {
+        console.log("got contacts:");
+        
+        await contacts.forEach(async c => {
+            console.log(`${c.id}-${c.name}`);
+            const imageURL = await getProfilePic(c.id);
+            console.log(`${c.id}:${imageURL}`);
+        })
+      });
+
+    const getProfilePic = async (jid: string) => {
+        try{
+            const imageURL = await sock.profilePictureUrl(jid);
+         
+            return imageURL;
+        }catch(e){
+            console.log(e);
+        }
+    }
 
     return sock;
 }
