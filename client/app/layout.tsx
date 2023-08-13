@@ -16,8 +16,21 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={raleway.className}>{children}</body>
+    <html lang="en" className={raleway.className}>
+      <div className="navbar">
+          <div id="logo">
+              <img id="logo-image" src="./assets/logo.svg" />
+          </div>
+      </div>
+
+      <body>{children}</body>
+
+      <footer>
+            <div>
+                Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
+                2018 © WhatsAppSync
+            </div>
+      </footer>
     </html>
   )
 }

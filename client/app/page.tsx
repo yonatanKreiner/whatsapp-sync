@@ -4,12 +4,6 @@ export default function Home() {
 
   return (
     <div>
-        <div className="navbar">
-            <div id="logo">
-                <img id="logo-image" src="./assets/logo.svg" />
-            </div>
-        </div>
-
         <div id='content'>
             <section id='site-img'>
                 <div className="content text">Synchronize your phone contacts with WhatsApp photos</div>
@@ -49,13 +43,6 @@ export default function Home() {
                 </div>
             </section>
         </div>
-
-        <footer>
-            <div>
-                Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
-                2018 © WhatsAppSync
-            </div>
-        </footer>
     </div>
   );
 }
