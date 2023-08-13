@@ -1,4 +1,5 @@
 "use client"
+import Link from 'next/link';
 
 export default function Home() {
 
@@ -33,7 +34,11 @@ export default function Home() {
                     </div>
                 </div>
                 <div id='qr'>
-                        <button id="button-contacts">import</button>
+                    <Link href={'/connect'}>
+                        <button id="button-contacts">
+                            import
+                        </button>
+                    </Link>
                 </div>
             </section>
             

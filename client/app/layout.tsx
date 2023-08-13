@@ -17,20 +17,22 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={raleway.className}>
-      <div className="navbar">
-          <div id="logo">
-              <img id="logo-image" src="./assets/logo.svg" />
-          </div>
-      </div>
-
-      <body>{children}</body>
-
-      <footer>
-            <div>
-                Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
-                2018 © WhatsAppSync
+      <body>
+        <div className="navbar">
+            <div id="logo">
+                <img id="logo-image" src="./assets/logo.svg" />
             </div>
-      </footer>
+        </div>
+
+        <div style={{minHeight:'69.5vh'}}>{children}</div>
+
+        <footer>
+              <div>
+                  Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
+                  2018 © WhatsAppSync
+              </div>
+        </footer>
+      </body>
     </html>
   )
 }
