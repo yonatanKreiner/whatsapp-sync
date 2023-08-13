@@ -1,56 +1,61 @@
 "use client"
 
-import Image from 'next/image'
-import { QRCodeSVG } from 'qrcode.react';
-import { useEffect, useState } from 'react';
-
-
-
-
 export default function Home() {
-  const [qrcode, setQrCode] = useState(undefined);
-
-  useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:5000");
-    webSocket.onmessage = (event) => {
-      debugger;
-      console.log(event.data);
-      try {
-        const data = JSON.parse(event.data);
-        if (data.qr) {
-          setQrCode(data.qr);
-        }
-      }catch(e){
-        console.log(e)
-      }
-    }
-  }, [])
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Welcome to&nbsp;
-          <code className="font-mono font-bold">whatsapp-sync</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <Image
-            src="/vercel.svg"
-            alt="Vercel Logo"
-            className="dark:invert"
-            width={100}
-            height={24}
-            priority
-          />
+    <div>
+        <div className="navbar">
+            <div id="logo">
+                <img id="logo-image" src="./assets/logo.svg" />
+            </div>
         </div>
-      </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        {qrcode ?
-          <QRCodeSVG value={qrcode} />
-          : <>no code yet!</>
-        }
-      </div>
-    </main>
-  )
+        <div id='content'>
+            <section id='site-img'>
+                <div className="content text">Synchronize your phone contacts with WhatsApp photos</div>
+                <a href="#instructions"><button>let's get started</button></a>
+            </section>
+
+            <section id='instructions' className="section">
+                <div id='steps'>
+                    <h1>Setting contacts pictures has never been easier. Here is exactly how you do it:</h1>
+                    <div className="step wow slideInLeft">
+                        <img src="./assets/whatsapp.svg" className="hvr-bounce-in" />
+                        <span>Go to whatsapp and tap whatsapp web on settings</span>
+                    </div>
+                    <div className="step wow slideInLeft">
+                        <img src="./assets/qr-code.svg" className="hvr-rotate" />
+                        <span>Scan the code</span>
+                    </div>
+                    <div className="step wow slideInLeft">
+                        <img src="./assets/google-account.svg" className="hvr-sink" />
+                        <span>Authorize with your Google account</span>
+                    </div>
+                    <div className="step wow slideInLeft">
+                        <a className="hvr-icon-spin">
+                            <img src="./assets/sync.svg" className="hvr-forward" />    
+                        </a>
+                        <span>Wait for the sync to finish</span>
+                    </div>
+                </div>
+                <div id='qr'>
+                        <button id="button-contacts">import</button>
+                </div>
+            </section>
+            
+            <section id="section3" className="section">
+                <div id="whatsapp-web-video">
+                    <video autoPlay loop controls src="/assets/whatsapp-web.mp4"/>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <div>
+                Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
+                2018 © WhatsAppSync
+            </div>
+        </footer>
+    </div>
+  );
 }

@@ -1,0 +1,97 @@
+*{
+    font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    margin: 0;
+}
+
+#logo{
+    padding-left: 180px;
+    padding-top: 35px;
+    color: white;
+    font-size: x-large;
+}
+
+.navbar{
+    top: 0;
+    left: 0;
+    height: 100px;
+    width: 100%;
+    background-color: #128C7E;
+}
+
+.container{
+    width:100%;
+    min-width: 999px;
+    padding-top:66px;
+    padding-bottom:66px; 
+}
+
+.content{
+    padding-bottom:66px; 
+    text-align: center;
+    display: flex;
+    width: 70%;
+    margin: auto;
+    color:#282828;
+}
+
+.text{
+    flex: 1;
+    padding: 70px;
+    text-align: center;
+    color: #464646;
+    overflow: hidden;
+}
+
+.img-container{
+    flex: 1;
+}
+
+#qr{
+    flex: 1;
+}
+
+.howTo{
+    display: flex;
+}
+
+.item{
+    height: 400px;
+    flex:1;
+    display: flex;
+}
+
+#item1{
+    background-color: #d0e9ea; 
+    margin-right: 10px;
+}
+
+#item2{
+    background-color: #edf8f5;
+    margin-left: 10px;
+
+}
+
+#screenshot{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+h1{
+    margin-bottom:24px; 
+}
+
+footer{
+    background-color: #273443;
+    color: white;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    height: 80px;
+}
+
+footer div{
+    height: 45%;
+    color: rgba(255, 255, 255, .6);
+}
