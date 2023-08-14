@@ -1,8 +1,12 @@
 "use client"
 import { useEffect } from 'react';
 
-
 export default function Page() {
+    const getPeople = async () => {
+        const res = await fetch('/api/people')
+    }
+
+
     const auth = async () => {
         const res = await fetch('/api/auth/register');
         console.log(res)
@@ -11,28 +15,14 @@ export default function Page() {
             window.document.location = res.headers.get("location")!;
         }else{
             console.log('logged in');
+            await getPeople();
         }
 
         return res;
     }
-
-    const getCodeInCookie = () => {
-        const cookieValue = document.cookie
-                            .split("; ")
-                            .find((row) => row.startsWith("client-token="))
-                            ?.split("=")[1];
-
-        return cookieValue;
-    }
     
     useEffect(() => {
-        // const code = getCodeInCookie();
-        // if(!code){
-            auth();
-        // }else{
-            // console.log(code)
-        //     }
-        
+        auth();
       }, [])
 
     return (

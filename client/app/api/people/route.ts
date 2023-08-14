@@ -10,25 +10,24 @@ const credentials = {
 const people = google.people('v1');
 
 export async function GET(request: NextRequest) {
-    const oauth2Client = new google.auth.OAuth2({clientId: credentials.client_id, clientSecret: credentials.client_secret, redirectUri: credentials.redirect_uri});
-    const scopes = ['https://www.googleapis.com/auth/contacts'];
+    // const oauth2Client = new google.auth.OAuth2({clientId: credentials.client_id, clientSecret: credentials.client_secret, redirectUri: credentials.redirect_uri});
+    // const scopes = ['https://www.googleapis.com/auth/contacts'];
 
-    const code = request.cookies.get("code")?.value;
-    console.log(code);
-    const {tokens} = await oauth2Client.getToken(code!);
-    console.log(`token: ${tokens}`)
-    oauth2Client.setCredentials(tokens);
+    const accessToken = request.cookies.get("client-token")?.value;
+    console.log(accessToken);
+    // const {tokens} = await oauth2Client.getToken(code!);
+    // console.log(`token: ${tokens}`)
+    // oauth2Client.setCredentials(tokens);
 
-    google.options({auth: oauth2Client });
+    // google.options({auth: oauth2Client });
 
     const {
         data: {connections},
       } = await people.people.connections.list({
-
         personFields: 'names',
         resourceName: 'people/me',
         pageSize: 10,
-        oauth_token: tokens.access_token!
+        oauth_token: accessToken
       });
 
       console.log("\n\nUser's Connections:\n");
@@ -37,6 +36,5 @@ export async function GET(request: NextRequest) {
 
     return new Response('succeed authenticate', {
         status: 200,
-        headers: { 'Set-Cookie': `client-token=${code}` },
     });
 }

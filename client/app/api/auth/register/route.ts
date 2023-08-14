@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
- 
-import {google} from 'googleapis';
+
+import { google } from 'googleapis';
 
 const credentials = {
     client_id: "524139804888-5pmtubbjouds99tioias0b6amipak52f.apps.googleusercontent.com",
@@ -9,17 +9,21 @@ const credentials = {
 }
 
 async function googleAuth() {
-    const oauth2Client = new google.auth.OAuth2({clientId: credentials.client_id, clientSecret: credentials.client_secret, redirectUri: credentials.redirect_uri});
+    const oauth2Client = new google.auth.OAuth2({
+        clientId: credentials.client_id,
+        clientSecret: credentials.client_secret,
+        redirectUri: credentials.redirect_uri
+    });
     const scopes = ['https://www.googleapis.com/auth/contacts'];
 
     const url = oauth2Client.generateAuthUrl({
         // 'online' (default) or 'offline' (gets refresh_token)
         access_type: 'offline',
-      
+
         // If you only need one scope you can pass it as a string
         scope: scopes
     });
-  
+
     console.log(`url: ${url}`)
     return url;
 }
@@ -28,7 +32,7 @@ async function googleAuth() {
 export async function GET(request: NextRequest) {
     const code = request.cookies.get("client-token")?.value;
     console.log(`current code: ${code}`);
-    if(code){
+    if (code) {
         return new Response("already in", {
             status: 200,
         });
