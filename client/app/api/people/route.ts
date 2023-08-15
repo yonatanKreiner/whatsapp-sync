@@ -5,12 +5,11 @@ const people = google.people('v1');
 
 export async function GET(request: NextRequest) {
   const accessToken = request.cookies.get("client-token")?.value;
-  console.log(accessToken);
   
   const {
       data: {connections},
     } = await people.people.connections.list({
-      personFields: 'names,resourceName,phoneNumbers',
+      personFields: 'names,phoneNumbers',
       resourceName: 'people/me',
       pageSize: 10,
       oauth_token: accessToken
