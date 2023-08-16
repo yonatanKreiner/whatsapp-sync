@@ -3,8 +3,8 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 
-
 export const WhatappConnector = () => {
+    const [isLoadContansSucceed,setIsLoadContansSucceed] = useState(false);
   const [qrcode, setQrCode] = useState(null);
 
   const connectToServerBySocket = () => {
@@ -16,6 +16,9 @@ export const WhatappConnector = () => {
           const data = JSON.parse(event.data);
           if (data.qr) {
             setQrCode(data.qr);
+          }
+          if(data.whatsappContacts) {
+            setIsLoadContansSucceed(true);
           }
         } catch (e) {
           console.log(e)
@@ -32,9 +35,11 @@ export const WhatappConnector = () => {
 
   return (
     <div>
-      {qrcode ?
-        <QRCodeSVG value={qrcode} />
-        : <>no code available yet!</>
+      {isLoadContansSucceed ? 
+        <>Succeed fetch images from whatsapp</> 
+        : qrcode ?
+            <QRCodeSVG value={qrcode} />
+            : <>no code available yet!</>
       }
     </div>
   )

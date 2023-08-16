@@ -23,10 +23,6 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
         },
         msgRetryCounterCache: undefined,
         generateHighQualityLinkPreview: true,
-        // ignore all broadcast messages -- to receive the same
-        // comment the line below out
-        // shouldIgnoreJid: jid => isJidBroadcast(jid),
-        // implement to handle retries & poll updates
         getMessage: undefined,
     });
 
@@ -44,9 +40,10 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
             }
         }
 
-        console.log('connection update', update)        
-        clientSocket.send(JSON.stringify({connection, qr: update.qr, lastDisconnect}));
+        console.log('connection update', update)
+        clientSocket.send(JSON.stringify({ connection, qr: update.qr, lastDisconnect }));
     });
+
     // sock.ev.on("messages.upsert", async (m) => {
     //     console.log(JSON.stringify(m, undefined, 2));
 
@@ -58,20 +55,22 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
 
     sock.ev.on("contacts.upsert", async (contacts) => {
         console.log("got contacts:");
-        
-        await contacts.forEach(async c => {
-            console.log(`${c.id}-${c.name}`);
+
+        const contactsWithPic = await contacts.map(async c => {
             const imageURL = await getProfilePic(c.id);
-            console.log(`${c.id}:${imageURL}`);
+
+            return { ...c, imageURL }
         })
-      });
+
+        clientSocket.send(JSON.stringify({ whatsappContacts: contactsWithPic }));
+    });
 
     const getProfilePic = async (jid: string) => {
-        try{
+        try {
             const imageURL = await sock.profilePictureUrl(jid);
-         
+
             return imageURL;
-        }catch(e){
+        } catch (e) {
             console.log(e);
         }
     }
@@ -79,4 +78,4 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
     return sock;
 }
 
-export {connectToWhatsApp};
+export { connectToWhatsApp };
