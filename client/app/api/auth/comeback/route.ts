@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     });
     console.log(`token: ${tokens}`)
 
-    const url = `http://${request.nextUrl.host}/people`;
+    const url = `http://${request.nextUrl.host}/people?login=succeed`;
     console.log(`redirect to: ${url}`);
 
     const res = NextResponse.redirect(url, { status: 302, });

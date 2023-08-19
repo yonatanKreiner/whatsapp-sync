@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
 
 export const SignIn = () => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
@@ -7,19 +8,22 @@ export const SignIn = () => {
         const res = await fetch('/api/auth/register');
         console.log(res)
 
-        if (res.status == 401) {
-            window.document.location = res.headers.get("location")!;
-        } else {
+        if(res.status === 200){
             setIsLoggedIn(true);
-            console.log('logged in');
         }
 
         return res;
     }
 
+    useEffect(() => {
+        if(document.URL.includes('succeed')){
+            setIsLoggedIn(true);
+        }
+    });
+
     return (
         <div>
-            {isLoggedIn ? 
+            {!isLoggedIn ? 
                 <div>
                     <button onClick={onClickSignIn}>
                         Sign In to Google
