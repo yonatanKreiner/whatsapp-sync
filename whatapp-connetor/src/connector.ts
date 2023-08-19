@@ -45,16 +45,17 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
     });
 
     sock.ev.on("contacts.upsert", async (contacts) => {
-        console.log("got contacts:");
 
-        const contactsWithPic = await contacts.map(async c => {
+        const contactsWithPic = contacts.slice(0,2500).map(async c => {
             const imageURL = await getProfilePic(c.id);
 
             return { ...c, imageURL }
         })
 
-        console.log(contactsWithPic);
-        clientSocket.send(JSON.stringify({ whatsappContacts: contactsWithPic }));
+        const contactsWithPicResult = await Promise.all(contactsWithPic);
+        console.log("got contacts:");
+        console.log(contactsWithPicResult);
+        clientSocket.send(JSON.stringify({ whatsappContacts: contactsWithPicResult }));
     });
 
     const getProfilePic = async (jid: string) => {

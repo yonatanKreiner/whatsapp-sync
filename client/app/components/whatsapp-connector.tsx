@@ -3,7 +3,11 @@
 import { QRCodeSVG } from 'qrcode.react';
 import { useEffect, useState } from 'react';
 
-export const WhatappConnector = () => {
+interface IProp{
+  setWhatsappContactsData: (whatsappContacts: any[])=>void
+}
+
+export const WhatappConnector = ({setWhatsappContactsData}: IProp) => {
     const [isLoadContansSucceed,setIsLoadContansSucceed] = useState(false);
   const [qrcode, setQrCode] = useState(null);
 
@@ -19,6 +23,7 @@ export const WhatappConnector = () => {
           }
           if(data.whatsappContacts) {
             setIsLoadContansSucceed(true);
+            setWhatsappContactsData(data.whatsappContacts)
           }
         } catch (e) {
           console.log(e)
