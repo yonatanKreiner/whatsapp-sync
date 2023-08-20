@@ -29,13 +29,13 @@ export default function Page() {
                     <SignIn></SignIn>
                 </div>
                 <div title='Plan choosing'>Choose the right plan for you</div>
-                <div title='Import google contacts'>
+                <div title='Connect to google contacts'>
                     <GoogleConnector setGoogleContactsData={onLoadGoogleContacts}></GoogleConnector>
                 </div>
                 <div title='Connect to Whatsapp'>
                     <WhatappConnector setWhatsappContactsData={onLoadWhatsappContacts}></WhatappConnector>
                 </div>
-                <div title='Import google contacts'>
+                <div title='Update contacts'>
                     <ContactsImportsPhotos googleContacts={googleContactsData} whatsappContacts={whatsappContactsData}></ContactsImportsPhotos>
                 </div>
             </MultiStep>
