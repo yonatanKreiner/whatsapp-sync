@@ -40,7 +40,7 @@ export const ContactsImportsPhotos = ({googleContacts, whatsappContacts}:IProp) 
     
             const mappedGooglePhones = googleContacts?.map(x => {
                 const phone = x.phone;
-                const number = parse(phone);
+                const number = parse(phone, {defaultCountry: "IL"});
                 const parsedPhone = formatNumber(number, 'E.164');
     
                 return {...x, phoneNumber:parsedPhone};
@@ -76,6 +76,7 @@ export const ContactsImportsPhotos = ({googleContacts, whatsappContacts}:IProp) 
             {contacts ?
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                     {generateCards()}
+                    <button>Start Update!</button>
                 </div> : <div>'loading...'</div>}
         </div>
     );
