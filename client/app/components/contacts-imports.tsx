@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
 import { UserCard } from 'react-ui-cards';
-
-interface IPeople {
-    resourceNane: string;
-    name: string;
-    phone: string;
-    imageUrl: string | null
-}
+import phoneparser from 'phoneparser';
+import {parse, formatNumber} from 'libphonenumber-js';
 
 interface IProp {
     googleContacts?: any[];
@@ -14,17 +9,60 @@ interface IProp {
 }
 
 export const ContactsImportsPhotos = ({googleContacts, whatsappContacts}:IProp) => {
+    const [contacts, setContacts] = useState<any[]>([])
+
+
+    const innerJoin = (gContacts: any[],wContacts: any[]): any[] => {
+        const contacts: any[] = [];
+        gContacts.forEach((gContact, index) => {
+            // Search through objects in first loop
+            wContacts.forEach((wContact,i2) => {
+                if(gContact.phoneNumber === wContact.phoneNumber){
+                    contacts.push({gContact, wContact});
+                }
+            });
+        });
+
+        return contacts;
+    }
+    
+    useEffect(() => {
+        debugger;
+        if(whatsappContacts && googleContacts){
+            const mappedWhatsappPhones = whatsappContacts?.map(x => {
+                const phoneNumber = x.id.split('@')[0];
+                const phone = phoneparser.parse(phoneNumber);
+                const localizedPhone = phone?.localized?.stripped;
+                const countryCode = phone?.country?.iso3166?.alpha2;
+    
+                return {...x, countryCode, phoneNumber: phone.normalized, localizedPhone}
+            });
+    
+            const mappedGooglePhones = googleContacts?.map(x => {
+                const phone = x.phone;
+                const number = parse(phone);
+                const parsedPhone = formatNumber(number, 'E.164');
+    
+                return {...x, phoneNumber:parsedPhone};
+            });
+
+            const contacts = innerJoin(mappedGooglePhones, mappedWhatsappPhones);
+            setContacts(contacts);
+        }
+
+        debugger;
+    }, [])
 
     const generateCards = () => {
-        if (googleContacts){
-            const peopleCards = googleContacts.map(p => <UserCard
-                key={p.phone}
+        if (contacts){
+            const peopleCards = contacts.map(p => <UserCard
+                key={p.gContact.phone}
                 float
                 href={null}
                 header=''
-                avatar={p.imageUrl ?? ''}
-                name={p.name}
-                positionName={p.phone}
+                avatar={p.wContact.imageURL ?? ''}
+                name={p.gContact.name}
+                positionName={p.gContact.phoneNumber}
             />)
 
             return peopleCards;
@@ -35,7 +73,7 @@ export const ContactsImportsPhotos = ({googleContacts, whatsappContacts}:IProp) 
 
     return (
         <div>
-            {googleContacts ?
+            {contacts ?
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                     {generateCards()}
                 </div> : <div>'loading...'</div>}

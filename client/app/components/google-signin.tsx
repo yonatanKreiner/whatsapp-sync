@@ -10,6 +10,8 @@ export const SignIn = () => {
 
         if(res.status === 200){
             setIsLoggedIn(true);
+        }else if(res.status === 401){
+            document.location = res.headers.get("location")!;
         }
 
         return res;

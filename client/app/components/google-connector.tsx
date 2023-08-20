@@ -33,7 +33,7 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
 
     useEffect(() => {
         getPeople();
-    })
+    }, [])
 
     return (
         <div>
