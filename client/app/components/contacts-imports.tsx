@@ -15,7 +15,6 @@ export const ContactsImportsPhotos = ({googleContacts, whatsappContacts}:IProp) 
     const innerJoin = (gContacts: any[],wContacts: any[]): any[] => {
         const contacts: any[] = [];
         gContacts.forEach((gContact, index) => {
-            // Search through objects in first loop
             wContacts.forEach((wContact,i2) => {
                 if(gContact.phoneNumber === wContact.phoneNumber){
                     contacts.push({gContact, wContact});
