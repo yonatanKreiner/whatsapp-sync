@@ -1,5 +1,13 @@
 import { WebSocket } from 'ws';
-import makeWASocket, { DisconnectReason, fetchLatestBaileysVersion, useMultiFileAuthState, makeCacheableSignalKeyStore, WAMessageKey, WAMessageContent } from "@whiskeysockets/baileys";
+import makeWASocket,
+{
+    DisconnectReason,
+    fetchLatestBaileysVersion,
+    useMultiFileAuthState,
+    makeCacheableSignalKeyStore,
+    WAMessageKey,
+    WAMessageContent
+} from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import Logger from './logger'
 
@@ -39,14 +47,15 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
                 console.log('Connection closed. You are logged out.')
             }
         }
-
-        console.log('connection update', update)
-        clientSocket.send(JSON.stringify({ connection, qr: update.qr, lastDisconnect }));
+        else{
+            console.log('connection update', update)
+            clientSocket.send(JSON.stringify({ connection, qr: update.qr, lastDisconnect }));   
+        }
     });
 
     sock.ev.on("contacts.upsert", async (contacts) => {
 
-        const contactsWithPic = contacts.slice(0,2500).map(async c => {
+        const contactsWithPic = contacts.slice(0, 2500).map(async c => {
             const imageURL = await getProfilePic(c.id);
 
             return { ...c, imageURL }
@@ -56,6 +65,8 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
         console.log("got contacts:");
         console.log(contactsWithPicResult);
         clientSocket.send(JSON.stringify({ whatsappContacts: contactsWithPicResult }));
+
+        sock.logout("done retrieve images, and logout");
     });
 
     const getProfilePic = async (jid: string) => {
