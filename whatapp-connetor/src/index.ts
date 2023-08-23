@@ -15,6 +15,7 @@ wss.on('connection', socket => {
   socket.send("connection to ofir's server happaned");
 
   socket.on('message', message => console.log(message));
+  socket.on('close', (code: number, reason: Buffer) => console.log(code + reason.toString()))
 });
 
 const server = app.listen(5000);

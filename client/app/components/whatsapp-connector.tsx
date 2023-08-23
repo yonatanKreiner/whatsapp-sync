@@ -24,6 +24,7 @@ export const WhatappConnector = ({setWhatsappContactsData}: IProp) => {
           if(data.whatsappContacts) {
             setIsLoadContansSucceed(true);
             setWhatsappContactsData(data.whatsappContacts)
+            webSocket.close(200, 'done retrieve data');
           }
         } catch (e) {
           console.log(e)
