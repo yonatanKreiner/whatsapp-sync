@@ -6,6 +6,7 @@ import { SignIn } from '../components/google-signin';
 import { WhatappConnector } from '../components/whatsapp-connector';
 import { ContactsImportsPhotos } from '../components/contacts-imports';
 import { GoogleConnector } from '../components/google-connector';
+import { PricingTiers } from '../components/pricing-tiers';
 
 export default function Page() {
     const [whatsappContactsData, setWhatsappContactsData] = useState<any[] | undefined>(undefined);
@@ -28,7 +29,7 @@ export default function Page() {
                 <div title='Sign In'>
                     <SignIn></SignIn>
                 </div>
-                <div title='Plan choosing'>Choose the right plan for you</div>
+                <div title='Plan choosing'><PricingTiers></PricingTiers></div>
                 <div title='Connect to google contacts'>
                     <GoogleConnector setGoogleContactsData={onLoadGoogleContacts}></GoogleConnector>
                 </div>
