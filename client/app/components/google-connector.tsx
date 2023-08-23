@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { UserCard } from 'react-ui-cards';
 
 interface IPeople {
     resourceNane: string;
@@ -24,7 +23,7 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
             resourceName: p.resourceName,
             name: p.names[0].displayName,
             phone: p.phoneNumbers[0].value,
-            imageUrl: null
+            imageUrl: p.photos[0].url
         })));
 
         setIsLoadContansSucceed(true);

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const {
     data: { connections },
   } = await people.people.connections.list({
-    personFields: 'names,phoneNumbers',
+    personFields: 'names,phoneNumbers,photos',
     resourceName: 'people/me',
     pageSize: 10,
     oauth_token: accessToken

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { UserCard } from 'react-ui-cards';
 import phoneparser from 'phoneparser';
 import { parse, formatNumber } from 'libphonenumber-js';
 import axios from "axios";
@@ -65,15 +64,16 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
 
     const generateCards = () => {
         if (contacts) {
-            const peopleCards = contacts.map(p => <UserCard
-                key={p.gContact.phone}
-                float
-                href={null}
-                header=''
-                avatar={p.wContact.imageURL ?? ''}
-                name={p.gContact.name}
-                positionName={p.gContact.phoneNumber}
-            />)
+            const peopleCards = contacts.map(p => (
+                <div style={{ border: '3px silver solid', borderRadius: '10px', padding: '10px' }}>
+                    <h4 style={{textAlign:'center',margin:'10px 5px'}}>{p.gContact.name}</h4>
+                    <span>
+                        <img style={{borderRadius: '50%'}} src={p.gContact.imageUrl ?? ''}></img>
+                        <h5 style={{fontWeight:"bold",textAlign: "center" }}>&dArr;</h5>
+                        <img style={{ borderRadius:'50%'}} src={p.wContact.imageURL ?? ''}></img>
+                    </span>
+                </div>
+            ));
 
             return peopleCards;
         }
