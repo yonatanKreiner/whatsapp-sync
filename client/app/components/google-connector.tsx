@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import Lottie from "lottie-react";
+import LoadingAnimation from '../../public/assets/animation_loading.json';
+import SucceedAnimation from '../../public/assets/animation_succeed.json';
 
 interface IPeople {
     resourceNane: string;
@@ -12,7 +15,6 @@ interface IProp {
 }
 
 export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
-
     const [isLoadContansSucceed, setIsLoadContansSucceed] = useState<boolean>(false);
 
     const getPeople = async () => {
@@ -35,11 +37,12 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
     }, [])
 
     return (
-        <div>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
             {isLoadContansSucceed ?
-                <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <div>
+                    <Lottie loop={false} autoPlay animationData={SucceedAnimation} />
                     Succeed load contacts from google!
-                </div> : <div>'loading...'</div>}
+                </div> : <Lottie style={{width:"15%",height:"15%"}}  animationData={LoadingAnimation} />}
         </div>
     );
 }
