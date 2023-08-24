@@ -7,9 +7,9 @@ import SucceedAnimation from '../../public/assets/animation_succeed.json';
 export const PricingTiers = () => {
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <div style={{display: 'flex',justifyContent:'center'}}>
             <div style={{
-                display: 'flex', position: 'absolute', width: '530px'
+                display: 'flex'
             }}>
                 <div style={{
                     flex: 3,
@@ -24,9 +24,9 @@ export const PricingTiers = () => {
                     padding: '12px'
                 }}>
                     <div style={{
-                            color: 'grey'
+                        color: 'grey'
                     }}>
-                            Tiral
+                        Tiral
                     </div>
                     <div style={{
                         color: 'grey'
@@ -37,7 +37,7 @@ export const PricingTiers = () => {
                     <button>START</button>
 
                 </div>
- 
+
                 <div style={{
                     flex: 3,
                     display: 'flex',
@@ -51,9 +51,9 @@ export const PricingTiers = () => {
                     padding: '12px'
                 }}>
                     <div style={{
-                            color: 'grey'
+                        color: 'grey'
                     }}>
-                            PRO
+                        PRO
                     </div>
                     <div style={{
                         color: 'grey'
@@ -63,7 +63,7 @@ export const PricingTiers = () => {
                     <div style={{ fontSize: '0.8rem' }}>up to 150 random contacts photos import</div>
                     <button>START</button>
                 </div>
- 
+
                 <div style={{
                     flex: 3,
                     display: 'flex',
@@ -77,9 +77,9 @@ export const PricingTiers = () => {
                     padding: '12px'
                 }}>
                     <div style={{
-                            color: 'grey'
+                        color: 'grey'
                     }}>
-                            Expert
+                        Expert
                     </div>
                     <div style={{
                         color: 'grey'
@@ -89,7 +89,6 @@ export const PricingTiers = () => {
                     <div style={{ fontSize: '0.8rem' }}>All contacts photos import</div>
                     <button>START</button>
                 </div>
- 
             </div>
         </div>
     );
