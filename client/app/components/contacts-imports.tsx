@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import phoneparser from 'phoneparser';
 import { parse, formatNumber } from 'libphonenumber-js';
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface IProp {
     googleContacts?: any[];
@@ -60,6 +61,13 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
         }, { withCredentials: true });
 
         console.log(res);
+        if(res.status === 200){
+            Swal.fire(
+                'Succeed import photos',
+                'Your contacts photos has been updated succesfully',
+                'success'
+              )
+        }
     }
 
     const generateCards = () => {
