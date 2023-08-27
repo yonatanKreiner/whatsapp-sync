@@ -1,19 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
-import {sign} from 'jsonwebtoken';
+import {JwtPayload, sign, verify} from 'jsonwebtoken';
 import { JWT_SECRET } from '../../oauth-config';
 
 export async function GET(request: NextRequest) {
     const profile = request.cookies.get("profile")?.value;
 
-    const url = `http://${request.nextUrl.host}/people?login=succeed&pricingTier=trial`;
-    console.log(`redirect to: ${url}`);
+    if(!profile){
+        return NextResponse.json('not authenticate with google', {status: 401});
+    }
+    
+    const profileWithTier = verify(profile, JWT_SECRET);
+    (profileWithTier as JwtPayload).profile.PricingTier = 'triel';
 
-    const pricingToken = sign({ pricingTier: 'trial' }, JWT_SECRET,{
+    const profileWithTierJWT = sign({ profile: (profileWithTier as JwtPayload).profile }, JWT_SECRET,{
         expiresIn: '2h'
     });
 
-    const res = NextResponse.redirect(url, { status: 302, });
-    res.cookies.set("pricing-token", pricingToken, {
+    const res = NextResponse.json('succeed acuiring trial', { status: 200, });
+    res.cookies.set("profile", profileWithTierJWT, {
         httpOnly: true,
         secure: true,
         sameSite: true
