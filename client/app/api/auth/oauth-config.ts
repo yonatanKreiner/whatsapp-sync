@@ -11,4 +11,7 @@ export const oauth2Client = new google.auth.OAuth2({
     clientSecret: credentials.client_secret,
     redirectUri: credentials.redirect_uri,
 });
+
 export const scopes = ['https://www.googleapis.com/auth/contacts'];
+
+export const JWT_SECRET = 'shhhhh';

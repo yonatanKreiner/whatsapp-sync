@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { google, people_v1 } from 'googleapis';
+import { google } from 'googleapis';
 
 const people = google.people('v1');
 
