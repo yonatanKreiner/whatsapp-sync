@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server'
 import { JWT_SECRET } from './app/config';
 
-// This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
     const profile = request.cookies.get("profile")?.value;
 

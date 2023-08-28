@@ -4,13 +4,6 @@ import LoadingAnimation from '../../public/assets/animation_loading.json';
 import SucceedAnimation from '../../public/assets/animation_succeed.json';
 import Swal from "sweetalert2";
 
-interface IPeople {
-    resourceNane: string;
-    name: string;
-    phone: string;
-    imageUrl: string | null
-}
-
 interface IProp {
     setGoogleContactsData: (googleContacts: any[])=>void
 }
