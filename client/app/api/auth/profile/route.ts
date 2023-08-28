@@ -1,6 +1,7 @@
+import { config } from './../../../../middleware';
 import { NextRequest, NextResponse } from 'next/server'
 import {JwtPayload, verify} from 'jsonwebtoken';
-import { JWT_SECRET } from '../oauth-config';
+import { JWT_SECRET } from '../../../config';
 
 export async function GET(request: NextRequest) {
     const profile = request.cookies.get("profile")?.value;

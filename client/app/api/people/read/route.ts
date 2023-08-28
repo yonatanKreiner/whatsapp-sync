@@ -4,6 +4,7 @@ import { google } from 'googleapis';
 const people = google.people('v1');
 
 export async function GET(request: NextRequest) {
+  debugger;
   const accessToken = request.cookies.get("client-token")?.value;
 
   const {

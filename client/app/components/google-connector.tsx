@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
 import SucceedAnimation from '../../public/assets/animation_succeed.json';
+import Swal from "sweetalert2";
 
 interface IPeople {
     resourceNane: string;
@@ -19,6 +20,16 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
 
     const getPeople = async () => {
         const res = await fetch('/api/people/read');
+        if(res.status == 401){
+            Swal.fire(
+                'did you logged in to you google acount?',
+                'Please try login to your acount',
+                'question'
+            )
+
+            return;
+        }
+        
         const data = await res.json();
 
         const peopleData = (data.map((p: any) => ({

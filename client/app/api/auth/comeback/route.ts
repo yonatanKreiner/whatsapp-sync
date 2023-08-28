@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { oauth2Client, credentials, JWT_SECRET } from '../oauth-config';
 import { sign } from 'jsonwebtoken';
+import { oauth2Client, credentials } from '../oauth-config';
+import { JWT_SECRET } from '@/app/config';
+
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;

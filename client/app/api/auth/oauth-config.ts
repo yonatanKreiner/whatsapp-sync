@@ -13,5 +13,3 @@ export const oauth2Client = new google.auth.OAuth2({
 });
 
 export const scopes = ['https://www.googleapis.com/auth/contacts'];
-
-export const JWT_SECRET = 'shhhhh';

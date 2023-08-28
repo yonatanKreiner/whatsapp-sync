@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {JwtPayload, sign, verify} from 'jsonwebtoken';
-import { JWT_SECRET } from '../../oauth-config';
+import { JWT_SECRET } from '@/app/config';
 
 export async function GET(request: NextRequest) {
     const profile = request.cookies.get("profile")?.value;
