@@ -9,18 +9,18 @@ interface IProp {
   setWhatsappContactsData: (whatsappContacts: any[]) => void
 }
 
+let whatsappSyncWSRef: WebSocket | null;
+
 export const WhatappConnector = ({ setWhatsappContactsData }: IProp) => {
   const [isLoadContansSucceed, setIsLoadContansSucceed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [qrcode, setQrCode] = useState(null);
-  const [whatsappSyncWS, setWhatsappSyncWS] = useState<WebSocket | null>(null)
 
   const connectToServerBySocket = () => {
     try {
       const webSocket = new WebSocket("ws://localhost:5000");
-      setWhatsappSyncWS(webSocket);
+      whatsappSyncWSRef = webSocket;
       webSocket.onmessage = (event) => {
-        debugger;
         console.log(event.data);
         try {
           const data = JSON.parse(event.data);
@@ -31,8 +31,6 @@ export const WhatappConnector = ({ setWhatsappContactsData }: IProp) => {
             setIsLoadContansSucceed(true);
             setIsLoading(false);
             setWhatsappContactsData(data.whatsappContacts)
-            webSocket.close(200, 'done retrieve data');
-            setWhatsappSyncWS(null);
           }
           if (data.connection == 'open') {
             setIsLoading(true);
@@ -50,14 +48,17 @@ export const WhatappConnector = ({ setWhatsappContactsData }: IProp) => {
     connectToServerBySocket();
 
     setTimeout(() => {
-      if (whatsappSyncWS && isLoadContansSucceed && isLoading) {
-        whatsappSyncWS.send('didntRecieveAnyContacts')
+      if (whatsappSyncWSRef && !isLoadContansSucceed && isLoading) {
+        whatsappSyncWSRef.close(1000, 'not retrieve data at all');
+        whatsappSyncWSRef = null;
+        connectToServerBySocket();
       }
-    }, 6000)
+    }, 10000)
 
     return () => {
-      if (whatsappSyncWS) {
-        whatsappSyncWS.close();
+      if (whatsappSyncWSRef) {
+        whatsappSyncWSRef.close(1000, 'done retrieve data');
+        whatsappSyncWSRef = null;
       }
     }
   }, [])

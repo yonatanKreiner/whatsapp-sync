@@ -59,7 +59,6 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
     });
     sock.ev.on("messaging-history.set", async ({contacts}) => {
         sendContacts(contacts);
-        sock.logout("done retrieve images, and logout");
     });
     
     const sendContacts = async (contacts) => {
@@ -70,20 +69,23 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
         })
 
         const contactsWithPicResult = await Promise.all(contactsWithPic);
-        console.log("got contacts:");
-        console.log(contactsWithPicResult);
+        console.log("got contacts!: " + contactsWithPicResult.length);
         clientSocket.send(JSON.stringify({ whatsappContacts: contactsWithPicResult }));
     }
 
     const getProfilePic = async (jid: string) => {
         try {
-            const imageURL = await sock.profilePictureUrl(jid);
+            const imageURL = await sock.profilePictureUrl(jid, 'preview', 1500);
 
             return imageURL;
         } catch (e) {
             console.log(e);
         }
     }
+
+    clientSocket.on('close', async (code, reason) => {
+        await sock.logout('closed by client');
+    });
 
     return sock;
 }
