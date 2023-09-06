@@ -34,7 +34,7 @@ export default function Home() {
                     </div>
                 </div>
                 <div id='qr'>
-                    <Link href={'/connect'}>
+                    <Link href={'/connect-photos'}>
                         <button id="button-contacts">
                             import
                         </button>

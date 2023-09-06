@@ -28,7 +28,7 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
         const peopleData = (data.map((p: any) => ({
             resourceName: p.resourceName,
             name: p.names[0].displayName,
-            phone: p.phoneNumbers[0].value,
+            phone: p.phoneNumbers ? p.phoneNumbers[0].value : null,
             imageUrl: p.photos[0].url
         })));
 

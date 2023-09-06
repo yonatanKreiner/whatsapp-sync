@@ -3,6 +3,8 @@ import phoneparser from 'phoneparser';
 import { parse, formatNumber } from 'libphonenumber-js';
 import axios from "axios";
 import Swal from "sweetalert2";
+import Lottie from "lottie-react";
+import LoadingAnimation from '../../public/assets/animation_loading.json';
 
 interface IProp {
     googleContacts?: any[];
@@ -11,7 +13,7 @@ interface IProp {
 
 export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IProp) => {
     const [contacts, setContacts] = useState<any[]>([])
-
+    const [isLoading, setIsLoading] = useState(false);
 
     const innerJoin = (gContacts: any[], wContacts: any[]): any[] => {
         const contacts: any[] = [];
@@ -51,22 +53,35 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
     }, [])
 
     const updateContacts = async () => {
-        const res = await axios.post('/api/people/update', {
-            contacts: contacts.map(x => ({
-                resourceName: x.gContact.resourceName,
-                imageURL: x.wContact.imageURL,
-                name: x.gContact.name,
-                phone: x.gContact.phoneNumber
-            }))
-        }, { withCredentials: true });
+        setIsLoading(true);
+        try {
+            const res = await axios.post('/api/people/update', {
+                contacts: contacts.map(x => ({
+                    resourceName: x.gContact.resourceName,
+                    imageURL: x.wContact.imageURL,
+                    name: x.gContact.name,
+                    phone: x.gContact.phoneNumber
+                }))
+            }, { withCredentials: true });
 
-        console.log(res);
-        if(res.status === 200){
+            console.log(res);
+            if (res.status === 200) {
+                Swal.fire(
+                    'Succeed import photos',
+                    'Your contacts photos has been updated succesfully',
+                    'success'
+                ).then(() => {
+                    window.location.href = "/";
+                })
+            }
+        } catch (err) {
             Swal.fire(
-                'Succeed import photos',
-                'Your contacts photos has been updated succesfully',
-                'success'
-              )
+                'Something went wrong',
+                'Please check every step in the proccess',
+                'question'
+            );
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -74,11 +89,11 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
         if (contacts) {
             const peopleCards = contacts.map(p => (
                 <div style={{ border: '3px silver solid', borderRadius: '10px', padding: '10px' }}>
-                    <h4 style={{textAlign:'center',margin:'10px 5px'}}>{p.gContact.name}</h4>
+                    <h4 style={{ textAlign: 'center', margin: '10px 5px' }}>{p.gContact.name}</h4>
                     <span>
-                        <img style={{borderRadius: '50%'}} src={p.gContact.imageUrl ?? ''}></img>
-                        <h5 style={{fontWeight:"bold",textAlign: "center" }}>&dArr;</h5>
-                        <img style={{ borderRadius:'50%'}} src={p.wContact.imageURL ?? ''}></img>
+                        <img style={{ borderRadius: '50%' }} src={p.gContact.imageUrl ?? ''}></img>
+                        <h5 style={{ fontWeight: "bold", textAlign: "center" }}>&dArr;</h5>
+                        <img style={{ borderRadius: '50%' }} src={p.wContact.imageURL ?? ''}></img>
                     </span>
                 </div>
             ));
@@ -94,8 +109,9 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
             {contacts ?
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}>
                     {generateCards()}
-                    <button onClick={updateContacts}>Start Update!</button>
-                </div> : <div>'loading...'</div>}
+                    {!isLoading ? <button onClick={updateContacts}>Start Update!</button> :
+                        <Lottie style={{ width: "15%", height: "15%" }} animationData={LoadingAnimation} />}
+                </div> : <></>}
         </div>
     );
 }

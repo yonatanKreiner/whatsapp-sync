@@ -5,10 +5,7 @@ import makeWASocket,
     fetchLatestBaileysVersion,
     useMultiFileAuthState,
     makeCacheableSignalKeyStore,
-    initAuthCreds,
-    makeInMemoryStore,
-    WAMessageKey,
-    WAMessageContent
+    Contact
 } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
 import Logger from './logger'
@@ -20,17 +17,17 @@ import Logger from './logger'
 const logger = Logger.child({})
 logger.level = 'trace'
 
-async function connectToWhatsApp(clientSocket: WebSocket) {
+async function connectToWhatsApp(clientSocket: WebSocket, sessionID: string) {
     const { version, isLatest } = await fetchLatestBaileysVersion()
 
-    const { state, saveCreds } = await useMultiFileAuthState('baileys_auth_info')
+    const { state, saveCreds } = await useMultiFileAuthState(`sessions/${sessionID}`)
 
     const sock = makeWASocket({
         version,
         logger,
         printQRInTerminal: false,
         mobile: false,
-        auth: { 
+        auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys, logger)
         },
@@ -47,7 +44,7 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
         if (connection === 'close') {
             // reconnect if not logged out
             if ((lastDisconnect?.error as Boom)?.output?.statusCode !== DisconnectReason.loggedOut) {
-                connectToWhatsApp(clientSocket)
+                connectToWhatsApp(clientSocket, sessionID)
             } else {
                 console.log('Connection closed. You are logged out.')
             }
@@ -57,12 +54,12 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
             clientSocket.send(JSON.stringify({ connection, qr: update.qr, lastDisconnect }));
         }
     });
-    sock.ev.on("messaging-history.set", async ({contacts}) => {
+    sock.ev.on("contacts.upsert", async (contacts) => {
         sendContacts(contacts);
     });
-    
-    const sendContacts = async (contacts) => {
-        const contactsWithPic = contacts.slice(0, 2500).map(async c => {
+
+    const sendContacts = async (contacts: Contact[]) => {
+        const contactsWithPic = contacts.filter(x => !x.id.includes('g.us')).slice(0, 2500).map(async c => {
             const imageURL = await getProfilePic(c.id);
 
             return { ...c, imageURL }
@@ -84,7 +81,9 @@ async function connectToWhatsApp(clientSocket: WebSocket) {
     }
 
     clientSocket.on('close', async (code, reason) => {
-        await sock.logout('closed by client');
+        if (!sock.ws.isClosing && !sock.ws.isClosed) {
+            console.log('client close the connection!')
+        }
     });
 
     return sock;

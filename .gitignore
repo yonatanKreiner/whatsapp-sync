@@ -70,4 +70,4 @@ log.txt
 .vscode
 
 lib/
-baileys_auth_info/
+sessions/
