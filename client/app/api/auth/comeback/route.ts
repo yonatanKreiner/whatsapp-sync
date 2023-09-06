@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         expiresIn: '2h'
     });
 
-    const url = `http://${request.nextUrl.host}/people?login=succeed`;
+    const url = `http://${request.nextUrl.host}/connect-photos?login=succeed`;
     console.log(`redirect to: ${url}`);
 
     const res = NextResponse.redirect(url, { status: 302, });

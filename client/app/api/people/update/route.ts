@@ -20,9 +20,12 @@ export async function POST(request: NextRequest) {
   const updateResults = await Promise.all(updatePromises);
 
 
-  const isSucceed = updateResults.every(r => r.updateResult);
+  const isSucceedPartially = updateResults.some(r => r.updateResult);
+  const isSucceedFully = updateResults.every(r => r.updateResult);
 
-  return isSucceed ? NextResponse.json({ "result": "succeed" }, { status: 200 }) : NextResponse.json({ "result": "failed" }, { status: 500 }) ;
+  return isSucceedFully ? NextResponse.json({ "result": "succeed, update all contacts requested" }, { status: 200 }) :
+    isSucceedPartially ? NextResponse.json({ "result": "partialy succeed, failed to update some of the contacts" }, { status: 200 }) :
+      NextResponse.json({ "result": "failed, failed to update contacts" }, { status: 500 });
 }
 
 const updateContactPhoto = async (contact: any, accessToken: string) => {
@@ -41,5 +44,5 @@ const updateContactPhoto = async (contact: any, accessToken: string) => {
   });
 
 
-  return {resourceName: res.data.person?.resourceName, updateResult: res.status == 200}
+  return { resourceName: res.data.person?.resourceName, updateResult: res.status == 200 }
 }

@@ -80,12 +80,6 @@ async function connectToWhatsApp(clientSocket: WebSocket, sessionID: string) {
         }
     }
 
-    clientSocket.on('close', async (code, reason) => {
-        if (!sock.ws.isClosing && !sock.ws.isClosed) {
-            console.log('client close the connection!')
-        }
-    });
-
     return sock;
 }
 

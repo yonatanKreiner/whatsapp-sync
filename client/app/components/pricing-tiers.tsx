@@ -85,7 +85,7 @@ export const PricingTiers = () => {
                             }}>
                                 <b>15$</b><span style={{ fontSize: '0.7rem' }}> / onetime</span>
                             </div>
-                            <div style={{ fontSize: '0.8rem' }}>up to 150 random contacts photos import</div>
+                            <div style={{ fontSize: '0.8rem' }}>up to 250 random contacts photos import</div>
                             <button disabled>comming soon</button>
                         </div>
 
@@ -111,7 +111,7 @@ export const PricingTiers = () => {
                             }}>
                                 <b>30$</b><span style={{ fontSize: '0.7rem' }}> / onetime</span>
                             </div>
-                            <div style={{ fontSize: '0.8rem' }}>All contacts photos import</div>
+                            <div style={{ fontSize: '0.8rem' }}>All contacts photos import (up to 1000 contacts)</div>
                             <button disabled>comming soon</button>
                         </div>
                     </div>
