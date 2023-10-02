@@ -1,0 +1,139 @@
+* {
+  /* font-family: 'Raleway', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; */
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+:root {
+  --main-bg-color: #1D2027;
+  --sub-bg-color: white;
+  --left-padding: 100px;
+}
+
+#logo {
+  padding-left: var(--left-padding);
+  padding-top: 15px;
+  color: var(--sub-bg-color);
+  font-size: x-large;
+}
+
+#logo-image {
+  width: 15%;
+}
+
+.navbar {
+  top: 0;
+  left: 0;
+  /* position: absolute; */
+  height: 100px;
+  width: 100%;
+  background-color: var(--main-bg-color);
+}
+
+.text {
+  color: var(--sub-bg-color);
+  position: relative;
+  font-size: 36px;
+  width: 400px;
+}
+
+a {
+  text-decoration: none;
+  color: var(--main-bg-color);
+}
+
+#content {
+  min-width: 700px;
+}
+
+#site-img {
+  padding: 120px 0 0px var(--left-padding);
+  background-image: url(/assets/background.png);
+  background-size:cover;
+  background-repeat:no-repeat;
+  height: 600px;
+}
+
+#instructions {
+  background-color: #F9F9FB;
+  display: flex;
+}
+
+#instructions > div {
+  flex: 1;
+}
+
+#progress {
+  width: 0;
+  height: 30px;
+  background-color: rgb(76, 135, 175);
+  text-align: center; /* To center it horizontally (if you want) */
+  line-height: 30px; /* To center it vertically */
+  color: white; 
+}
+
+.step img {
+  width: 50px;
+  height: 50px;
+}
+
+#whatsapp-web-video {
+  float: right;
+}
+
+.step {
+  padding-top: 30px
+}
+
+.step span {
+  padding-left: 20px; 
+}
+
+.section {
+  height: 500px;
+  padding: 50px;
+}
+
+#section3 {
+  background-color: var(--main-bg-color);
+}
+
+button {
+  cursor: pointer;
+  background-color: var(--sub-bg-color);
+  border: 1px solid var(--main-bg-color);
+  border-radius: 5px;
+  height: 50px;
+  width: 160px;
+  margin: 20px;
+}
+
+button:hover:enabled {
+  background-color: var(--main-bg-color);
+  color: white;
+}
+
+button:disabled, button[disabled]{
+  cursor: not-allowed;
+}
+
+#qr {
+  padding: 50px;
+  text-align: center;
+}
+
+footer {
+  position: relative;
+  background-color: var(--main-bg-color);
+  color: var(--sub-bg-color);
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  height: 80px;
+}
+
+footer div {
+  height: 45%;
+  color: var(--sub-bg-color);
+}

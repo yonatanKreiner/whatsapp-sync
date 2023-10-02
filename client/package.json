@@ -1,0 +1,36 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "autoprefixer": "10.4.14",
+    "axios": "^1.4.0",
+    "eslint": "8.46.0",
+    "eslint-config-next": "13.4.13",
+    "googleapis": "^124.0.0",
+    "jsonwebtoken": "^9.0.1",
+    "libphonenumber-js": "^1.10.41",
+    "lottie-react": "^2.4.0",
+    "next": "13.4.13",
+    "phoneparser": "^3.0.2",
+    "postcss": "8.4.27",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-multistep": "^5.5.9",
+    "sweetalert2": "^11.7.27",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/node": "20.4.9",
+    "@types/react": "18.2.20",
+    "@types/react-dom": "18.2.7",
+    "typescript": "5.1.6"
+  }
+}
