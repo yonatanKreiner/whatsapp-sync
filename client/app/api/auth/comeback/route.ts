@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sign } from 'jsonwebtoken';
 import { oauth2Client, credentials } from '../oauth-config';
-import { JWT_SECRET } from '@/app/config';
+import { APP_URL, JWT_SECRET } from '@/app/config';
 
 
 export async function GET(request: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
         expiresIn: '2h'
     });
 
-    const url = `http://${request.nextUrl.host}/connect-photos?login=succeed`;
+    const url = `${APP_URL}/connect-photos?login=succeed`;
     console.log(`redirect to: ${url}`);
 
     const res = NextResponse.redirect(url, { status: 302, });
