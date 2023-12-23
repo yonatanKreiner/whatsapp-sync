@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Raleway} from 'next/font/google'
 import { createTheme, MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] })
 const raleway = Raleway({subsets: ['latin'],display: 'swap'})
@@ -26,9 +27,11 @@ export default function RootLayout({
       <body>
         <MantineProvider theme={theme}>
           <div className="navbar">
+            <Link href='/'>
               <div id="logo">
                   <img id="logo-image" src="./assets/logo.svg" />
               </div>
+            </Link>
           </div>
 
           <div style={{minHeight:'70vh', height:'fit-content'}}>{children}</div>
