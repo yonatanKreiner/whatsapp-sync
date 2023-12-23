@@ -31,10 +31,10 @@ export default function RootLayout({
               </div>
           </div>
 
-          <div style={{minHeight:'69.5vh'}}>{children}</div>
+          <div style={{minHeight:'70vh', height:'fit-content'}}>{children}</div>
 
           <footer>
-                <div>
+                <div style={{padding:'25px'}}>
                     Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
                     2018 © WhatsAppSync
                 </div>
