@@ -1,7 +1,0 @@
-websocket-client
-git+https://github.com/dpallot/simple-websocket-server.git#egg=SimpleWebSocketServer
-curve25519-donna
-pycrypto
-pyqrcode
-protobuf
-pymongo

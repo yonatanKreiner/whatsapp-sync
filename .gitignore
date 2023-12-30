@@ -68,3 +68,6 @@ log.txt
 .envrc
 
 .vscode
+
+lib/
+sessions/
