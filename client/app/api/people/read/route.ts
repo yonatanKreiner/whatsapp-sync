@@ -3,8 +3,7 @@ import { google } from 'googleapis';
 
 const people = google.people('v1');
 
-export async function GET(request: NextRequest) {
-  debugger;
+export async function POST(request: NextRequest) {
   const accessToken = request.cookies.get("client-token")?.value;
 
   const {

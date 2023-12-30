@@ -12,7 +12,7 @@ export const GoogleConnector = ({setGoogleContactsData}:IProp) => {
     const [isLoadContansSucceed, setIsLoadContansSucceed] = useState<boolean>(false);
 
     const getPeople = async () => {
-        const res = await fetch('/api/people/read');
+        const res = await fetch('/api/people/read', {method: 'POST'});
         if(res.status == 401){
             Swal.fire(
                 'did you logged in to you google acount?',
