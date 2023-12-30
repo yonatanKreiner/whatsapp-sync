@@ -4,7 +4,11 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
 
-export const PricingTiers = () => {
+type props = {
+    moveToNextStep: () => void
+}
+
+export const PricingTiers = ({moveToNextStep}:props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isPickedPlan, setIsPickedPlan] = useState(false);
 
@@ -17,6 +21,7 @@ export const PricingTiers = () => {
 
             if (res.status == 200) {
                 setIsPickedPlan(true);
+                moveToNextStep();
             }
         } catch (err) {
             Swal.fire(

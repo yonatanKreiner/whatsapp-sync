@@ -2,7 +2,11 @@ import Lottie from "lottie-react";
 import { useEffect, useState } from "react";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
 
-export const SignIn = () => {
+type props = {
+    moveToNextStep: () => void
+}
+
+export const SignIn = ({moveToNextStep}: props) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -13,6 +17,7 @@ export const SignIn = () => {
 
         if (res.status === 200) {
             setIsLoggedIn(true);
+            moveToNextStep()
         } else if (res.status === 401) {
             document.location = res.headers.get("location")!;
         }
@@ -25,8 +30,9 @@ export const SignIn = () => {
     useEffect(() => {
         if (document.URL.includes('succeed')) {
             setIsLoggedIn(true);
+            moveToNextStep()
         }
-    });
+    }, []);
 
     return (
         <div style={{display: 'flex', justifyContent: 'center'}}>

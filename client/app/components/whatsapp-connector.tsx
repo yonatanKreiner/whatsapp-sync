@@ -4,6 +4,7 @@ import Lottie from "lottie-react";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
 import SucceedAnimation from '../../public/assets/animation_succeed.json';
 import QRAnimation from '../../public/assets/animation_qr.json';
+import { WHATSAPP_SOCKET_SERVICE } from '../config';
 
 interface IProp {
   setWhatsappContactsData: (whatsappContacts: any[]) => void
@@ -18,7 +19,7 @@ export const WhatappConnector = ({ setWhatsappContactsData }: IProp) => {
 
   const connectToServerBySocket = () => {
     try {
-      const webSocket = new WebSocket("ws://localhost:5000");
+      const webSocket = new WebSocket(`wss://${WHATSAPP_SOCKET_SERVICE}`);
       whatsappSyncWSRef = webSocket;
       webSocket.onmessage = (event) => {
         console.log(event.data);
