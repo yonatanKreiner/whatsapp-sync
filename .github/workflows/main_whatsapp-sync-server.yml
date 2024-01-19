@@ -58,5 +58,5 @@ jobs:
         with:
           app-name: 'whatsapp-sync-server'
           slot-name: 'Production'
-          package: .
+          package: ./whatapp-connetor
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_516F085A1F664543A076EF99B256BA0B }}
