@@ -24,7 +24,15 @@ wss.on('connection', async socket => {
   });
 });
 
-const server = app.listen(5000);
+
+app.get('/test', (req, res) => {
+  res.send("The app is ready!");
+})
+
+const server = app.listen(5000, () => {
+  console.log('app is running!!!')
+});
+
 server.on('upgrade', (request, socket, head) => {
   wss.handleUpgrade(request, socket, head, socket => {
     wss.emit('connection', socket, request);

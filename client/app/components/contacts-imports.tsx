@@ -5,6 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import Lottie from "lottie-react";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
+import { ResultStatus, UpdateContactsProfilesPhotos } from "../services/google-people";
 
 interface IProp {
     googleContacts?: any[];
@@ -55,17 +56,15 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
     const updateContacts = async () => {
         setIsLoading(true);
         try {
-            const res = await axios.post('/api/people/update', {
-                contacts: contacts.map(x => ({
-                    resourceName: x.gContact.resourceName,
-                    imageURL: x.wContact.imageURL,
-                    name: x.gContact.name,
-                    phone: x.gContact.phoneNumber
-                }))
-            }, { withCredentials: true });
+            const res = await UpdateContactsProfilesPhotos(contacts.map(x => ({
+                resourceName: x.gContact.resourceName,
+                imageURL: x.wContact.imageURL,
+                name: x.gContact.name,
+                phone: x.gContact.phoneNumber
+            })));
 
             console.log(res);
-            if (res.status === 200) {
+            if (res === ResultStatus.SUCCEED) {
                 Swal.fire(
                     'Succeed import photos',
                     'Your contacts photos has been updated succesfully',
@@ -73,6 +72,12 @@ export const ContactsImportsPhotos = ({ googleContacts, whatsappContacts }: IPro
                 ).then(() => {
                     window.location.href = "/";
                 })
+            }else {
+                Swal.fire(
+                    'Something went wrong',
+                    'Please check every step in the proccess',
+                    'question'
+                );    
             }
         } catch (err) {
             Swal.fire(

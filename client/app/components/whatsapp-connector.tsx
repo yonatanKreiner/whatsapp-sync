@@ -19,7 +19,7 @@ export const WhatappConnector = ({ setWhatsappContactsData }: IProp) => {
 
   const connectToServerBySocket = () => {
     try {
-      const webSocket = new WebSocket(`wss://${WHATSAPP_SOCKET_SERVICE}`);
+      const webSocket = new WebSocket(`ws://${WHATSAPP_SOCKET_SERVICE}`);
       whatsappSyncWSRef = webSocket;
       webSocket.onmessage = (event) => {
         console.log(event.data);
