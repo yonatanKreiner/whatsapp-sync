@@ -13,8 +13,8 @@ export async function GET(request: NextRequest) {
         client_id: credentials.client_id,
         redirect_uri: credentials.redirect_uri
     });
-    const { email, user_id} = await oauth2Client.getTokenInfo(tokens.access_token!);
-    const profile = sign({ profile: {email, user_id} }, JWT_SECRET,{
+    const { email, user_id } = await oauth2Client.getTokenInfo(tokens.access_token!);
+    const profile = sign({ profile: { email, user_id } }, JWT_SECRET, {
         expiresIn: '2h'
     });
 
@@ -24,8 +24,8 @@ export async function GET(request: NextRequest) {
     const res = NextResponse.redirect(url, { status: 302, });
     res.cookies.set("client-token", tokens.access_token!, {
         expires: tokens.expiry_date!,
-        httpOnly: true,
-        secure: true,
+        // httpOnly: true,
+        // secure: true,
         sameSite: true
     });
     res.cookies.set("profile", profile, {
