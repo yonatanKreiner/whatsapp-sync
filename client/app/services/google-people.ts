@@ -7,19 +7,30 @@ export enum ResultStatus {
     FAILED
 }
 
+const chunks = (array: any[], size: number) =>
+    Array.from(
+        new Array(Math.ceil(array.length / size)),
+        (_, i) => array.slice(i * size, i * size + size)
+    );
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+
 export async function UpdateContactsProfilesPhotos(contacts: any[]): Promise<ResultStatus> {
-    debugger;
+    const updateResults = []
     const accessToken = getCookie('client-token')
 
     if (!contacts) {
         return ResultStatus.FAILED
     }
 
-    const updatePromises: Promise<any>[] = contacts.filter((x: any) => x.imageURL && x.resourceName)
-        .map((x: any) => updateContactPhoto(x, accessToken!));
-
-    const updateResults = await Promise.all(updatePromises);
-
+    const chunkedContacts = chunks(contacts.filter((x: any) => x.imageURL && x.resourceName), 3);
+    for await(const chunk of chunkedContacts){
+        const updatePromises: Promise<any>[] =
+            chunk.map((x: any) => updateContactPhoto(x, accessToken!)); 
+        updateResults.push(...await Promise.all(updatePromises));
+        
+        await delay(500)
+    }
 
     const isSucceedPartially = updateResults.some(r => r.updateResult);
     const isSucceedFully = updateResults.every(r => r.updateResult);
