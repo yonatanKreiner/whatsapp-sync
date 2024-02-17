@@ -14,18 +14,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json('not authenticate with google', { status: 401 });
   }
 
-  debugger;
   const { choosen_plan } = await request.json();
   if (!choosen_plan) {
     return NextResponse.json('missing choosen plan', { status: 400 });
   }
-
-  const profileWithTier = verify(profile, JWT_SECRET);
-  (profileWithTier as JwtPayload).profile.PricingTier = choosen_plan as PRICING_PLAN;
-
-  const profileWithTierJWT = sign({ profile: (profileWithTier as JwtPayload).profile }, JWT_SECRET, {
-    expiresIn: '2h'
-  });
 
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -41,20 +33,15 @@ export async function POST(request: NextRequest) {
       },
     ],
     mode: 'payment',
-    success_url: `${APP_URL}/connect-photos?plan_choose=succeed`,
-    cancel_url: `${APP_URL}?plan_choose=canceled`,
+    success_url: `${APP_URL}/api/pricing/comeback?choosen_plan=${choosen_plan}`,
+    cancel_url: `${APP_URL}`,
   });
 
 
   const res = NextResponse.json('succeed', {
-    status: 200, headers: [
-      ['location', session.url!]
-    ]
-  });
-  res.cookies.set("profile", profileWithTierJWT, {
-    httpOnly: true,
-    secure: true,
-    sameSite: true
+    status: 200, headers: {
+      'location': session.url!
+    }
   });
 
   return res;
