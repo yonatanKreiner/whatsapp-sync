@@ -1,0 +1,68 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { APP_URL, JWT_SECRET } from '@/app/config';
+import { PRICING_PLAN } from '@/app/enums';
+import { credentials } from '../../oauth-config';
+import Stripe from 'stripe';
+
+export async function POST(request: NextRequest) {
+  const stripe = new Stripe(credentials.stripe_key);
+
+  const profile = request.cookies.get("profile")?.value;
+
+  if (!profile) {
+    return NextResponse.json('not authenticate with google', { status: 401 });
+  }
+
+  debugger;
+  const { choosen_plan } = await request.json();
+  if (!choosen_plan) {
+    return NextResponse.json('missing choosen plan', { status: 400 });
+  }
+
+  const profileWithTier = verify(profile, JWT_SECRET);
+  (profileWithTier as JwtPayload).profile.PricingTier = choosen_plan as PRICING_PLAN;
+
+  const profileWithTierJWT = sign({ profile: (profileWithTier as JwtPayload).profile }, JWT_SECRET, {
+    expiresIn: '2h'
+  });
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: `WhatsappSync-${choosen_plan}`,
+          },
+          unit_amount: GetPricingForPlan(choosen_plan),
+        },
+        quantity: 1
+      },
+    ],
+    mode: 'payment',
+    success_url: `${APP_URL}/connect-photos?plan_choose=succeed`,
+    cancel_url: `${APP_URL}?plan_choose=canceled`,
+  });
+
+
+  const res = NextResponse.redirect(session.url, { status: 303, });
+  res.cookies.set("profile", profileWithTierJWT, {
+    httpOnly: true,
+    secure: true,
+    sameSite: true
+  });
+
+  return res;
+}
+
+function GetPricingForPlan(pricingPlan: PRICING_PLAN): number {
+  switch (pricingPlan) {
+    case PRICING_PLAN.PRO:
+      return 1500;
+    case PRICING_PLAN.EXPERT:
+      return 3000;
+  }
+
+  return 3000
+}

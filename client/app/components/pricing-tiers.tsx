@@ -3,6 +3,7 @@ import Lottie from "lottie-react";
 import { useState } from "react";
 import Swal from "sweetalert2";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
+import { PRICING_PLAN } from "../enums";
 
 type props = {
     moveToNextStep: () => void
@@ -16,6 +17,31 @@ export const PricingTiers = ({moveToNextStep}:props) => {
         setIsLoading(true);
         try {
             const res = await axios.get('/api/auth/pricing/trial', {
+                withCredentials: true
+            });
+
+            if (res.status == 200) {
+                setIsPickedPlan(true);
+                moveToNextStep();
+            }
+        } catch (err) {
+            Swal.fire(
+                'Something went wrong',
+                'Do you login to your google account?',
+                'question'
+            )
+        }
+        finally {
+            setIsLoading(false);
+        }
+    }
+
+    const onClickPayment = async (choosenPlan: PRICING_PLAN) => {
+        setIsLoading(true);
+        try {
+            const res = await axios.post('/api/auth/pricing/stripe', {
+                choosen_plan: choosenPlan
+            }, {
                 withCredentials: true
             });
 
@@ -91,7 +117,7 @@ export const PricingTiers = ({moveToNextStep}:props) => {
                                 <b>15$</b><span style={{ fontSize: '0.7rem' }}> / onetime</span>
                             </div>
                             <div style={{ fontSize: '0.8rem' }}>up to 250 random contacts photos import</div>
-                            <button disabled>comming soon</button>
+                            <button onClick={() => onClickPayment(PRICING_PLAN.PRO)}>START</button>
                         </div>
 
                         <div style={{
@@ -117,7 +143,7 @@ export const PricingTiers = ({moveToNextStep}:props) => {
                                 <b>30$</b><span style={{ fontSize: '0.7rem' }}> / onetime</span>
                             </div>
                             <div style={{ fontSize: '0.8rem' }}>All contacts photos import (up to 1000 contacts)</div>
-                            <button disabled>comming soon</button>
+                            <button onClick={() => onClickPayment(PRICING_PLAN.EXPERT)}>START</button>
                         </div>
                     </div>
                     : <>plan picked successfully!</>}

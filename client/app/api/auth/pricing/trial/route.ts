@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import {JwtPayload, sign, verify} from 'jsonwebtoken';
 import { JWT_SECRET } from '@/app/config';
+import { PRICING_PLAN } from '@/app/enums';
 
 export async function GET(request: NextRequest) {
     const profile = request.cookies.get("profile")?.value;
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     }
     
     const profileWithTier = verify(profile, JWT_SECRET);
-    (profileWithTier as JwtPayload).profile.PricingTier = 'triel';
+    (profileWithTier as JwtPayload).profile.PricingTier = PRICING_PLAN.TRIAL;
 
     const profileWithTierJWT = sign({ profile: (profileWithTier as JwtPayload).profile }, JWT_SECRET,{
         expiresIn: '2h'
