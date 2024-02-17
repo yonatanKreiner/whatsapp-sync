@@ -1,6 +1,6 @@
 import axios from "axios";
 import Lottie from "lottie-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
 import { PRICING_PLAN } from "../enums";
@@ -9,9 +9,21 @@ type props = {
     moveToNextStep: () => void
 }
 
-export const PricingTiers = ({moveToNextStep}:props) => {
+export const PricingTiers = ({ moveToNextStep }: props) => {
     const [isLoading, setIsLoading] = useState(false);
     const [isPickedPlan, setIsPickedPlan] = useState(false);
+
+    useEffect(() => {
+        fetch('/api/auth/profile', { credentials: 'include' }).then(res => {
+            res.json().then(data => {
+                if (data.PricingTier) {
+                    setIsPickedPlan(true)
+                    moveToNextStep();
+                }
+            })
+
+        })
+    }, [])
 
     const onClickTrial = async () => {
         setIsLoading(true);
