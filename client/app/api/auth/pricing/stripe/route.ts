@@ -46,7 +46,11 @@ export async function POST(request: NextRequest) {
   });
 
 
-  const res = NextResponse.redirect(session.url, { status: 303, });
+  const res = NextResponse.json('succeed', {
+    status: 200, headers: [
+      ['location', session.url!]
+    ]
+  });
   res.cookies.set("profile", profileWithTierJWT, {
     httpOnly: true,
     secure: true,

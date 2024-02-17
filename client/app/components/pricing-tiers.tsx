@@ -46,6 +46,8 @@ export const PricingTiers = ({moveToNextStep}:props) => {
             });
 
             if (res.status == 200) {
+                debugger;
+                window.location = res.headers.location;
                 setIsPickedPlan(true);
                 moveToNextStep();
             }
