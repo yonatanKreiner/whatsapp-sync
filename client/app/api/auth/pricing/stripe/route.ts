@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
       },
     ],
     mode: 'payment',
-    success_url: `${APP_URL}/api/pricing/comeback?choosen_plan=${choosen_plan}`,
+    success_url: `${APP_URL}/api/auth/pricing/comeback?choosen_plan=${choosen_plan}`,
     cancel_url: `${APP_URL}`,
   });
 

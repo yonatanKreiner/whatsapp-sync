@@ -5,6 +5,7 @@ import { PRICING_PLAN } from '@/app/enums';
 
 
 export async function GET(request: NextRequest) {
+  debugger;
     const searchParams = request.nextUrl.searchParams;
     const choosen_plan = searchParams.get('choosen_plan');
 
