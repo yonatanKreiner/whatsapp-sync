@@ -1,12 +1,12 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter, Raleway} from 'next/font/google'
+import { Inter, Raleway } from 'next/font/google'
 import { createTheme, MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import Link from 'next/link';
+import Image from 'next/image';
 
-const inter = Inter({ subsets: ['latin'] })
-const raleway = Raleway({subsets: ['latin'],display: 'swap'})
+const raleway = Raleway({ subsets: ['latin'], display: 'swap' })
 
 const theme = createTheme({
   /** Put your mantine theme override here */
@@ -26,22 +26,26 @@ export default function RootLayout({
     <html lang="en" className={raleway.className}>
       <body>
         <MantineProvider theme={theme}>
-          <div className="navbar">
-            <Link href='/'>
-              <div id="logo">
-                  <img id="logo-image" src="./assets/logo.svg" />
-              </div>
-            </Link>
-          </div>
-
-          <div style={{minHeight:'70vh', height:'fit-content'}}>{children}</div>
-
-          <footer>
-                <div style={{padding:'25px'}}>
-                    Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
-                    2018 © WhatsAppSync
+          <main style={{minHeight: '100vh', display: 'flex', flexDirection:'column'}}>
+            <div className="navbar">
+              <Link href='/' style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+                <div id="logo">
+                  <Image fill={true}
+                    alt="logo"
+                    src='./assets/logo.svg' />
                 </div>
-          </footer>
+              </Link>
+            </div>
+
+            <>{children}</>
+
+            <footer>
+              <div style={{ padding: '25px' }}>
+                Not affiliated with WhatsApp and we don't host any of the WhatsApp profile pictures on this website, all rights belong to their respective owners.<br />
+                2018 © WhatsAppSync
+              </div>
+            </footer>
+          </main>
         </MantineProvider>
       </body>
     </html>
