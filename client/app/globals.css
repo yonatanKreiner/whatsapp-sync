@@ -11,14 +11,16 @@
 }
 
 #logo {
-  padding-left: var(--left-padding);
-  padding-top: 15px;
   color: var(--sub-bg-color);
-  font-size: x-large;
-}
+  position: relative;
+  height: 60%;
+  max-width: 50%;
+  min-width: 25%;
+  margin-left: 32px;
 
-#logo-image {
-  width: 15%;
+  @media only screen and (max-width: 499px)  {
+    min-width: 45%;
+  }
 }
 
 .navbar {
@@ -123,6 +125,7 @@ button:disabled, button[disabled]{
 }
 
 footer {
+  margin-top: auto;
   position: relative;
   background-color: var(--main-bg-color);
   color: var(--sub-bg-color);
