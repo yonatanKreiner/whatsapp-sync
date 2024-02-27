@@ -15,10 +15,10 @@
   position: relative;
   height: 60%;
   max-width: 50%;
-  min-width: 25%;
+  min-width: 19%;
   margin-left: 32px;
 
-  @media only screen and (max-width: 499px)  {
+  @media only screen and (max-width: 600px)  {
     min-width: 45%;
   }
 }
@@ -37,6 +37,11 @@
   position: relative;
   font-size: 36px;
   width: 400px;
+
+  @media only screen and (max-width: 600px)  {
+    width: fit-content;
+    font-size: 18px;
+  }
 }
 
 a {
@@ -46,6 +51,11 @@ a {
 
 #content {
   min-width: 700px;
+
+  @media only screen and (max-width: 600px)  {
+    min-width: 0;
+    max-width: 100vw;
+  }
 }
 
 #site-img {
@@ -54,15 +64,30 @@ a {
   background-size:cover;
   background-repeat:no-repeat;
   height: 600px;
+  
+  @media only screen and (max-width: 600px)  {
+    background-size:contain;
+    padding: 8px 8px 8px 8px;
+    height: 225px;
+
+    display: flex;
+    flex-direction: column-reverse;
+  }
 }
 
 #instructions {
   background-color: #F9F9FB;
   display: flex;
+  flex-wrap: wrap;
+  height: fit-content;
 }
 
 #instructions > div {
   flex: 1;
+
+  @media only screen and (max-width: 600px)  {
+    min-width: 250px;
+  }
 }
 
 #progress {
@@ -81,6 +106,17 @@ a {
 
 #whatsapp-web-video {
   float: right;
+
+  @media only screen and (max-width: 600px)  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    float: none;
+
+    video {
+      width: 90vw;
+    }
+  }
 }
 
 .step {
@@ -94,10 +130,18 @@ a {
 .section {
   height: 500px;
   padding: 50px;
+
+  @media only screen and (max-width: 600px)  {
+    padding: 8px;
+  }
 }
 
 #section3 {
   background-color: var(--main-bg-color);
+
+  @media only screen and (max-width: 600px)  {
+    height: 300px;
+  }
 }
 
 button {
