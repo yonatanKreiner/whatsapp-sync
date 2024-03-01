@@ -29,7 +29,7 @@ export async function UpdateContactsProfilesPhotos(contacts: any[]): Promise<Res
             chunk.map((x: any) => updateContactPhoto(x, accessToken!)); 
         updateResults.push(...await Promise.all(updatePromises));
         
-        await delay(500)
+        await delay(750)
     }
 
     const isSucceedPartially = updateResults.some(r => r.updateResult);
