@@ -1,3 +1,5 @@
+'use-client'
+
 import Lottie from "lottie-react";
 import { useEffect, useState } from "react";
 import LoadingAnimation from '../../public/assets/animation_loading.json';
