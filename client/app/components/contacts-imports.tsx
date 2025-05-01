@@ -1,3 +1,5 @@
+'use-client'
+
 import { useEffect, useState } from "react";
 import phoneparser from 'phoneparser';
 import { parse, formatNumber } from 'libphonenumber-js';
