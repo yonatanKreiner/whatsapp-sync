@@ -21,7 +21,7 @@ export const SignIn = ({moveToNextStep}: props) => {
             setIsLoggedIn(true);
             moveToNextStep()
         } else if (res.status === 401) {
-            // document.location = res.headers.get("location")!;
+            document.location = res.headers.get("location")!;
         }
 
         setIsLoading(false);
@@ -30,10 +30,10 @@ export const SignIn = ({moveToNextStep}: props) => {
     }
 
     useEffect(() => {
-        // if (document.URL.includes('succeed')) {
-        //     setIsLoggedIn(true);
-        //     moveToNextStep()
-        // }
+        if (document.URL.includes('succeed')) {
+            setIsLoggedIn(true);
+            moveToNextStep()
+        }
     }, []);
 
     return (

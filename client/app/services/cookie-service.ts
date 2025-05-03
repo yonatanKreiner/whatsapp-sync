@@ -1,5 +1,5 @@
-export function getCookie(cname: string): string|null {
-  if (!document) {
+export function getCookie(cname: string): string | null {
+  if (typeof document === "undefined") {
     return null;
   }
 

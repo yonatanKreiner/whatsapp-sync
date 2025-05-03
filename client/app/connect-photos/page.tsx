@@ -6,6 +6,7 @@ import { WhatappConnector } from '../components/whatsapp-connector';
 import { ContactsImportsPhotos } from '../components/contacts-imports';
 import { GoogleConnector } from '../components/google-connector';
 import { PricingTiers } from '../components/pricing-tiers';
+import { GoogleContactsStep } from '../components/google-contacts-step';
 
 import { Timeline } from '@mantine/core';
 import { FaGoogle, FaTelegramPlane, FaWhatsapp } from "react-icons/fa";
@@ -53,7 +54,7 @@ export default function Page() {
                     {activeStep === 1 ? <PricingTiers moveToNextStep={moveToNextStep} /> : <></>}
                 </Timeline.Item>
                 <Timeline.Item bullet={<FaGoogle size={15} />} title="Google Contacts">
-                    {activeStep === 2 ? <GoogleConnector setGoogleContactsData={onLoadGoogleContacts} /> : <></>}
+                    {activeStep === 2 ? <GoogleContactsStep moveToNextStep={moveToNextStep} /> : <></>}
                 </Timeline.Item>
                 <Timeline.Item bullet={<FaWhatsapp size={15} />} lineVariant="dashed" title="Whatsapp SignIn">
                     {activeStep === 3 ? <WhatappConnector setWhatsappContactsData={onLoadWhatsappContacts} /> : <></>}
